@@ -1,0 +1,12 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-family: Georgia;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background: linear-gradient(120deg, rgb(183, 214, 255), rgb(20, 101, 194));
+    height: 100vh;
+    overflow: hidden;
+  }
+
+   
