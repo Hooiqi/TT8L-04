@@ -4,7 +4,7 @@ body{
     font-family: Georgia;
     background-repeat: no-repeat;
     background-size: cover;
-    background: linear-gradient(120deg, rgb(183, 214, 255), rgb(20, 101, 194));
+    background: linear-gradient(120deg, rgb(151, 202, 236), rgb(45, 76, 100));
     height: 100vh;
     overflow: hidden;
   }
@@ -15,7 +15,7 @@ body{
     left: 50%;
     transform: translate(-50%, -50%);
     width: 29vw;
-    background: rgb(225, 238, 255);
+    background: rgb(172, 202, 240);
     border-radius: 10px;
   }
 
