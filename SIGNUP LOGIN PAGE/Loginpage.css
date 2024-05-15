@@ -71,3 +71,7 @@ form .input-box{
     color: #e9f4fb;
     transition: .5s;
   }
+
+.register-link {
+  padding: 0 0 0 30px;
+}
