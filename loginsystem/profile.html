@@ -1,0 +1,33 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8>
+  <meta name="viewport" content="width=device=width,initial-scale=1.0">
+  <tittle>User profile</tittle>
+</head>
+<body>
+  <div class="form-container">
+    <form action"" id="profile Page">
+      <div class="column-left">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="phone number">Phone Number:</label>
+        <input type="number" name="phone number" id="phone number" required>
+
+        <button type="button" onclick="submitForm()">Submit</button>
+      </div>
+
+      <div class="column-right">
+        <label for="photo">Profile Picture:</label>
+        <input type="file" name="photo" id="photo"
+        onchange="displayProfilePic()">
+        <img src'#' alt="Profile Picture" id="profilepic>
+      </div>
+    </form>
+  </div>
+
+        
+</body>
