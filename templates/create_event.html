@@ -1,9 +1,69 @@
 {% extends 'base.html' %}
 
+{% block title %}Create Event{% endblock %}
+
 {% block head %}
-{% block title %}{% endblock %}
 {% endblock %}
 
-{% block body %}
-
+{% block content %}
+<main>
+    <h1>Edit Event Details</h1>
+    <div>
+        <h2>Event Details</h2>
+        <table>
+            <tr>
+                <!--Set event name-->
+                <td>Name: *</td> 
+                <td><input type="text" name="" placeholder="Please enter event name" size="40px"></input>
+                </td>
+            </tr>
+            <tr>
+                <!--Set event date-->
+                <td><label for="startdate">Start Date: * </label></td>
+                <td>
+                    <form action="">
+                        <input type="datetime-local" id="startdate" name="startdate">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <!--Set event date-->
+                <td><label for="enddate">End Date: * </label></td>
+                <td>
+                    <form action="">
+                        <input type="datetime-local" id="enddate" name="enddate">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <!--Set event location-->
+                <td>Location: *</td>
+                <td>
+                    <select name="" style="100px;" required>
+                    </select>
+                </td>
+            </tr>
+            <tr>   
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>   
+                <td><label for="img">Poster:</label></td>
+                <td>
+                    <form action="">
+                        <input type="file" id="img" name="img" accept="image/*">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <!--Ruang untuk masukkan Password-->
+                <td colspan="2">Description: </td>
+            </tr>
+            <tr>
+                <td colspan="2"><textarea type="" name="event_descr"  
+                    placeholder="Event details" rows="10" cols="100%"></textarea></td>
+            </tr>
+        </table>
+    </div>
+</main>
 {% endblock %}
