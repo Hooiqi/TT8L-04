@@ -1,12 +1,14 @@
+
+
 .topnavbar {
   background-color: #015c92;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0px 10px;
   position: sticky; 
   top: 0; 
   left: 0;
+  right: 0;
   width: 100%; 
   z-index: 1000;
   }
@@ -208,4 +210,21 @@
 @keyframes fade {
   from {opacity: .4}
   to {opacity: 1}
+}
+
+.upcoming .upcoming_events {
+  font-size: 45px;
+  font-family: 'Times New Roman', Times, serif;
+  text-align: left;
+  color: rgb(26, 71, 155);
+}
+
+.upcoming .upcoming_events .span {
+  color: rgb(16, 155, 255);
+}
+
+.upcoming .event_container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(27rem, 1fr));
+  gap: 1.5rem;
 }
