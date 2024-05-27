@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="Homepage.css" type="text/css" rel="stylesheet" />
+    <link href="swiper.css" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/8d1db3e4f7.js" crossorigin="anonymous"></script>
     <link rel="icon" href="https://www.mmu.edu.my/favicon.ico" type="image/x-icon" />
@@ -113,19 +114,67 @@ function showSlides(n) {
 }
 </script>
 
-<section id="Upcoming" class="upcoming">
-  <h1 class="upcoming_events"><span>Upcoming</span> Events</h1>
-  <div class="event_container">
-    <div class="event_box">
-      <i class="fas fa-map-maker-alt"></i>
-      <h3>Event Name</h3>
+<div class="event-slider-container" id="eventSliderContainer">
+  <h2>Upcoming Events</h2>
+  <div class="event-slider" id="eventSlider">
+      <div class="event-container">
+          <div class="event-img parallax">
+              <img src="images/img1.jpg" alt="Event 1" class="event-cover">
+          </div>
+          <div class="event-details">
+              <h3>Event 1</h3>
+              <p>Description of Event 1</p>
+              <button class="view-details-btn" onclick="viewDetails(1)">View Details</button>
+          </div>
+      </div>
+      <div class="event-container">
+          <div class="event-img parallax">
+              <img src="images/img2.jpg" alt="Event 2" class="event-cover">
+          </div>
+          <div class="event-details">
+              <h3>Event 2</h3>
+              <p>Description of Event 2</p>
+              <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
+          </div>
+      </div>
+      <div class="event-container">
+        <div class="event-img parallax">
+            <img src="images/img3.jpg" alt="Event 2" class="event-cover">
+        </div>
+        <div class="event-details">
+            <h3>Event 2</h3>
+            <p>Description of Event 2</p>
+            <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
+        </div>
     </div>
+    <div class="event-container">
+      <div class="event-img parallax">
+          <img src="images/img2.jpg" alt="Event 2" class="event-cover">
+      </div>
+      <div class="event-details">
+          <h3>Event 2</h3>
+          <p>Description of Event 2</p>
+          <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
+      </div>
+  </div>
+  <script>
+  const eventSliderContainer = document.getElementById('eventSliderContainer');
+
+  eventSliderContainer.addEventListener('wheel', (event) => {
+      event.preventDefault(); // Prevent default scrolling behavior
+  
+      const delta = event.deltaY || event.detail || event.wheelDelta; // Get scroll direction
+      const scrollSpeed = 1; // Adjust scroll speed if needed
+  
+      // Scroll the slider horizontally
+      eventSliderContainer.scrollLeft += delta * scrollSpeed;
+  });
+  </script>
+
 
 
   </div>
-
-
-</section>
+</div>
 
 </body>
 </html>
