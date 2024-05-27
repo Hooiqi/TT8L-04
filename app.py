@@ -37,12 +37,12 @@ class Ticket(db.Model):
     __tablename__ = 'ticket'
     ticket_id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.event_id'), nullable=False)
-    ticket_type = db.Column(db.String(50))
+    ticket_type = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
     member_discount = db.Column(db.Numeric(10, 2))
-    max_quantity = db.Column(db.Integer)
+    max_quantity = db.Column(db.Integer, nullable=False)
     start_sale = db.Column(db.Date, nullable=False)
-    end_sale = db.Column(db.Date)
+    end_sale = db.Column(db.Date, nullable=False)
 
 class EventVenue(db.Model):
     __tablename__ = 'event_venue'
@@ -57,8 +57,8 @@ class EventCategory(db.Model):
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
     form = EventForm()
-    form.event_cat.choices = [(cat.category_id, cat.category) for cat in EventCategory.query.all()]
-    form.event_venue.choices = [(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
+    form.event_cat.choices = [("", "--Select an event category--")]+[(cat.category_id, cat.category) for cat in EventCategory.query.all()]
+    form.event_venue.choices = [("", "--Select a location type--")]+[(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
 
     if form.validate_on_submit():
         new_event = Event(
