@@ -27,10 +27,10 @@ class Event(db.Model):
     event_end = db.Column(db.Date)
     event_time = db.Column(db.Time, nullable=False)
     event_duration = db.Column(db.String(50), nullable=False)
-    event_img = db.Column(db.LargeBinary)
+    event_img = db.Column(db.LargeBinary, nullable=False)
     category_id = db.Column(db.String(3), db.ForeignKey('event_category.category_id'), nullable=False)
     eventvenue_id = db.Column(db.String(3), db.ForeignKey('event_venue.eventvenue_id'), nullable=False)
-    location_details = db.Column(db.String(255))
+    location_details = db.Column(db.String(255), nullable=False)
     admin_id = db.Column(db.String(4), db.ForeignKey('admin.admin_id'), nullable=False)
 
 class Ticket(db.Model):
