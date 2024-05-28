@@ -1,0 +1,454 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-header img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.profile-picture {
+    width: 80px;
+    height: 80px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.profile-info p {
+    margin: 5px 0;
+}
+
+.profile-info .form-group{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 70%;
+}
+
+.profile-info .form-group label {
+    width: 120px;
+    margin-right: 12px;
+}
+
+.profile-info{
+    width: 80%;
+}
+    
+
+.liked-events, .ticket-history {
+    margin-bottom: 20px;
+}
+
+.liked-events h2, .ticket-history h2 {
+    margin-bottom: 10px;
+}
+
+.event-box, .ticket-box {
+    width: 80px;
+    height: 80px;
+    background-color: #e0e0e0;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.event-box img, .ticket-box img {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
+
+.logout-button {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.logout-button:hover {
+    background-color: #0056b3;
+}
+
+
+/* ADMIN */
+.admin-profile-container {
+    width: 80%;
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px 48px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-profile-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-profile-container h2{
+    width: 50%;
+    border-bottom: 2px solid #ccc;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.admin-profile-form h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* CREATE EVENT */
+.create-event-container {
+    width: 80%;
+    max-width: 1000px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px 48px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.create-event-form {
+    display: flex;
+    flex-direction: column;
+}
+.ce-form-group {
+    margin-bottom: 25px;
+}
+.ce-form-group input,select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+/* group 2 row into 1 column */
+.ce-flex-group {
+    display: flex;
+    gap: 50px;
+}
+.ce-flex-group .ce-form-group {
+    flex: 1;
+}
+
+table.add-ticket{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.add-ticket th, table.add-ticket td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+table.add-ticket th {
+    background-color: #f0f0f0;
+}
+
+table.add-ticket td input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+table.add-ticket td button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+table.add-ticket td button:hover {
+    background-color: #c82333;
+}
+
+
+
+
+
+.poster-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.poster-background-blur {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+    transform: scale(1.1); /* Slightly enlarge the background */
+    z-index: 1;
+}
+.poster-foreground-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    max-height: 100%;
+    z-index: 2;
+}
+
+
+
+.event-detail-container{
+    margin-left: 10%;
+    margin-right: 10%; 
+}
+
+
+
+table.event-display {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border: 1px solid #ccc;
+}
+.event-display th,.event-display td {
+    border: 1px solid #f4f4f4;
+    padding: 10px;
+    text-align: left;
+}
+.event-display th {
+    background-color: #f4f4f4;
+    width: 20%;
+    padding-left: 2%;
+}
+
+
+.ticket-container {
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding-bottom: 30px;
+    padding-left: 40px;
+    padding-right: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ticket-details {
+    flex: 1;
+}
+.prices {
+    margin-top: 10px;
+}
+
+.date-select, .quantity-select {
+    margin-top: 10px;
+}
+.select-label {
+    margin-right: 10px;
+}
+.purchase-ticket {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+.topnavbar {
+    background-color: #015c92;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky; 
+    top: 0; 
+    left: 0;
+    right: 0;
+    width: 100%; 
+    z-index: 1000;
+}
+    
+.dropdown {
+    position: relative;
+}
+    
+.dropdown .dropbtn {
+    font-size: 16px;  
+    border: none;
+    outline: none;
+    color: white;
+    padding: 10px; 
+    background-color: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+    
+    .topnavbar a:hover, .dropdown:hover .dropbtn {
+      background-color: #00436a;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #2D82B5;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+  
+    .dropdown-content a {
+      color: rgb(255, 255, 255);
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: #1c567b;
+    }
+    
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  
+    .topnavbar .left {
+      display: flex;
+      align-items: center;
+    }
+  
+    .topnavbar .left .logo p {
+      font-size: 30px;
+      font-weight: bold;
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      color: aliceblue;
+      margin-right: 10px;
+      padding-left: 10px;
+    }
+  
+    .topnavbar .left .logo p span {
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      color: aqua;
+    }
+  
+    .topnavbar .right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 1;
+      margin-left: 700px;
+    }
+  
+    .topnavbar .right ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+    
+    .topnavbar .right ul li {
+      margin-left: 10px;
+    }
+    
+    .topnavbar .right ul li a {
+      font-size: 16px;
+      color: white;
+      text-decoration: none;
+      padding: 8px 12px;
+    }
+    
+    .topnavbar .right ul li a:hover {
+      background-color: #00436a;
+      border-radius: 8px;
+    }
+  
+    .searchbar {
+      margin-left: 12px;
+      display: flex;
+      align-items: center;
+    }
+  
+    .searchbar input[type="text"]{
+      border: 1px solid #666666;
+      padding: 8px; 
+      outline: none;
+      transition: all 0.5s linear;
+    }
+  
+  .filter {
+    padding-left: 5px;
+  }
+  
