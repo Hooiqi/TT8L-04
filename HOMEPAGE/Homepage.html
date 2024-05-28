@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="Homepage.css" type="text/css" rel="stylesheet" />
-    <link href="swiper.css" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/8d1db3e4f7.js" crossorigin="anonymous"></script>
     <link rel="icon" href="https://www.mmu.edu.my/favicon.ico" type="image/x-icon" />
@@ -114,7 +113,7 @@ function showSlides(n) {
 }
 </script>
 
-<div class="event-slider-container" id="eventSliderContainer">
+<div class="event-slider-container" id="eventSliderContainer" style="width: 100%; overflow-x: auto;">
   <h2>Upcoming Events</h2>
   <div class="event-slider" id="eventSlider">
       <div class="event-container">
@@ -157,24 +156,47 @@ function showSlides(n) {
           <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
       </div>
   </div>
-  <script>
-  const eventSliderContainer = document.getElementById('eventSliderContainer');
-
-  eventSliderContainer.addEventListener('wheel', (event) => {
-      event.preventDefault(); // Prevent default scrolling behavior
-  
-      const delta = event.deltaY || event.detail || event.wheelDelta; // Get scroll direction
-      const scrollSpeed = 1; // Adjust scroll speed if needed
-  
-      // Scroll the slider horizontally
-      eventSliderContainer.scrollLeft += delta * scrollSpeed;
-  });
-  </script>
-
-
-
+  <div class="event-container">
+    <div class="event-img parallax">
+        <img src="images/img1.jpg" alt="Event 2" class="event-cover">
+    </div>
+    <div class="event-details">
+        <h3>Event 2</h3>
+        <p>Description of Event 2</p>
+        <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
+    </div>
+</div>
+<div class="event-container">
+  <div class="event-img parallax">
+      <img src="images/img2.jpg" alt="Event 2" class="event-cover">
+  </div>
+  <div class="event-details">
+      <h3>Event 2</h3>
+      <p>Description of Event 2</p>
+      <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
   </div>
 </div>
+</div>
+</div>
+
+<button class="scroll-button scroll-button-left" onclick="scrollLeft()">&#10094;</button>
+<button class="scroll-button scroll-button-right" onclick="scrollRight()">&#10095;</button>
+
+
+
+<script>
+function scrollLeft() {
+    const container = document.getElementById('eventSliderContainer');
+    container.scrollLeft -= 100; // Adjust scroll distance as needed
+}
+
+function scrollRight() {
+    const container = document.getElementById('eventSliderContainer');
+    container.scrollLeft += 100; // Adjust scroll distance as needed
+}
+</script>
+
+
 
 </body>
 </html>
