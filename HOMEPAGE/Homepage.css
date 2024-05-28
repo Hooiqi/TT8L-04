@@ -5,12 +5,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky; 
-  top: 0; 
-  left: 0;
-  right: 0;
-  width: 100%; 
+  width: 101%; 
   z-index: 1000;
+  margin-top: -8px;
+  margin-left: -8px;
+  position: sticky; 
+  top: 0;
   }
   
   .dropdown {
@@ -68,7 +68,7 @@
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     color: aliceblue;
     margin-right: 10px;
-    padding-left: 10px;
+    padding-left: 20px;
   }
 
   .topnavbar .left .logo p span {
@@ -81,7 +81,7 @@
     align-items: center;
     justify-content: flex-end;
     flex: 1;
-    margin-left: 700px;
+    margin-left: 600px;
   }
 
   .topnavbar .right ul {
@@ -218,16 +218,17 @@
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   margin-top: 80px;
+  margin-bottom: 50px;
 }
 
 .event-slider-container h2 {
   font:  bold 1.2em "Fira Sans", sans-serif;
-  font-size: 34px;
+  font-size: 30px;
   letter-spacing: -0.2px;
   word-spacing: -1px;
   font-weight: 400;
   text-transform: capitalize;
-  margin-left: 10px;
+  margin-left: 15px;
 }
 
 .event-slider {
@@ -284,7 +285,7 @@
 }
 
 .view-details-btn {
-  background-color: #fff;
+  background-color: #ffffff;
   border: 0 solid #e2e8f0;
   border-radius: 1.5rem;
   box-sizing: border-box;
@@ -308,28 +309,51 @@
 }
 
 .view-details-btn:hover {
-    background-color: #1e293b;
+    background-color: #0d3a82;
     color: #fff;
 }
 
-.scroll-button {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
-  margin-top: 100px;
-  background-color: rgba(255, 255, 255, 0.5); /* Transparent white */
-  border: none;
-  outline: none;
-  cursor: pointer;
-  z-index: 1000; /* Ensure buttons appear above other content */
+.profile-card-h{
+  font:  bold 1.2em "Fira Sans", sans-serif;
+  font-size: 30px;
+  letter-spacing: -0.2px;
+  word-spacing: -1px;
+  font-weight: 400;
+  text-transform: capitalize;
+  margin-left: 50px;
+  margin-top: 50px;
 }
 
-.scroll-button-left {
-  left: 10px;
+.profile-card-container {
+  display: flex;
 }
 
-.scroll-button-right {
-  right: 10px;
+
+.profile-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin-top: 20px;
+  margin-left: 50px;
+  text-align: center;
+}
+
+.profile-card h2 {
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 200;
+  font-size: 26px;
+}
+
+.profile-card-title p {
+  color: grey;
+  font-size: 18px;
+}
+
+.profile-card a {
+  text-decoration: none;
+  font-size: 22px;
+  color: black;
+}
+
+.profile-card button {
+  margin-bottom: 20px;
 }
