@@ -76,7 +76,7 @@
                 <tbody id="tickets-tbody">
                     {% for ticket in form.tickets %}
                     <tr>
-                        <td>{{ ticket.ticket_type() }}</td>
+                        <td>{{ ticket.hidden_tag() }} {{ ticket.ticket_type() }}</td>
                         <td>{{ ticket.price() }}</td>
                         <td>{{ ticket.member_discount() }}</td>
                         <td>{{ ticket.max_quantity() }}</td>
@@ -97,7 +97,7 @@
                     const row = document.createElement('tr');
 
                     row.innerHTML = `
-                        <td><input type="text" name="tickets-${index}-ticket_type" placeholder="Ticket type" required></td>
+                        <td><input type="hidden" name="tickets-${index}-csrf_token" value="{{ csrf_token() }}"><input type="text" name="tickets-${index}-ticket_type" required></td>
                         <td><input type="number" step="0.01" name="tickets-${index}-price" required></td>
                         <td><input type="number" step="0.01" name="tickets-${index}-member_discount" required></td>
                         <td><input type="number" name="tickets-${index}-max_quantity" required></td>
