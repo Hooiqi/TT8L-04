@@ -1,11 +1,13 @@
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from forms import TicketForm, EventForm
+from flask_wtf import CSRFProtect
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://root:tt8l_04@localhost/event_management_system'
 app.config['SECRET_KEY'] = 'ihopethiscanrun'
 db = SQLAlchemy(app)
+csrf = CSRFProtect(app)
 
 # Models
 class Admin(db.Model):
@@ -24,7 +26,7 @@ class Event(db.Model):
     event_name = db.Column(db.String(100), nullable=False)
     event_descr = db.Column(db.Text, nullable=False)
     event_start = db.Column(db.Date, nullable=False)
-    event_end = db.Column(db.Date)
+    event_end = db.Column(db.Date, nullable=False)
     event_time = db.Column(db.Time, nullable=False)
     event_duration = db.Column(db.String(50), nullable=False)
     event_img = db.Column(db.LargeBinary, nullable=False)
@@ -58,7 +60,7 @@ class EventCategory(db.Model):
 def create_event():
     form = EventForm()
     form.event_cat.choices = [("", "--Select an event category--")]+[(cat.category_id, cat.category) for cat in EventCategory.query.all()]
-    form.event_venue.choices = [("", "--Select a location type--")]+[(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
+    form.event_venue.choices = [("", "--Select a location category--")]+[(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
 
     if form.validate_on_submit():
         new_event = Event(
