@@ -10,6 +10,49 @@ db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 
 # Models
+class User(db.Model):
+    __tablename__ = 'user'
+    user_id = db.Column(db.String(10), primary_key=True)
+    user_name = db.Column(db.String(100), nullable=False)
+    user_email = db.Column(db.String(39), unique=True, nullable=False)
+    user_phone = db.Column(db.String(12), nullable=False)
+    user_pwd = db.Column(db.String(50), nullable=False)
+    
+    orders = db.relationship('UserOrder', backref='user', lazy=True)
+    memberships = db.relationship('Membership', backref='user', lazy=True)
+
+class OrderStatus(db.Model):
+    __tablename__ = 'order_status'
+    ostatus_id = db.Column(db.Integer, primary_key=True)
+    ostatus_name = db.Column(db.String(10), nullable=False)
+
+    orders = db.relationship('UserOrder', backref='order_status', lazy=True)
+
+class UserOrder(db.Model):
+    __tablename__ = 'user_order'
+    order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(10), db.ForeignKey('user.user_id'), nullable=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.ticket_id'), nullable=False)
+    order_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    order_quantity = db.Column(db.Integer, nullable=False)
+    ostatus_id = db.Column(db.Integer, db.ForeignKey('order_status.ostatus_id'), nullable=False)
+    invoice = db.Column(db.String(20), nullable=False)
+
+class MemberStatus(db.Model):
+    __tablename__ = 'member_status'
+    mstatus_id = db.Column(db.Integer, primary_key=True)
+    mstatus_name = db.Column(db.String(10))
+
+    memberships = db.relationship('Membership', backref='member_status', lazy=True)
+
+class Membership(db.Model):
+    __tablename__ = 'membership'
+    membership_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(10), db.ForeignKey('user.user_id'), nullable=False)
+    admin_id = db.Column(db.String(4), db.ForeignKey('admin.admin_id'), nullable=False)
+    request_date = db.Column(db.DateTime, default=datetime.utcnow)
+    mstatus_id = db.Column(db.Integer, db.ForeignKey('member_status.mstatus_id'), nullable=False)
+
 class Admin(db.Model):
     __tablename__ = 'admin'
     admin_id = db.Column(db.String(4), primary_key=True)
@@ -19,6 +62,10 @@ class Admin(db.Model):
     admin_pwd = db.Column(db.String(50), nullable=False)
     admin_descr = db.Column(db.Text)
     stripeacc_id = db.Column(db.String(255), nullable=False)
+    admin_img = db.Column(db.LargeBinary, nullable=False)
+
+    events = db.relationship('Event', backref='admin', lazy=True)
+    memberships = db.relationship('Membership', backref='admin', lazy=True)
 
 class Event(db.Model):
     __tablename__ = 'event'
@@ -34,6 +81,10 @@ class Event(db.Model):
     eventvenue_id = db.Column(db.String(3), db.ForeignKey('event_venue.eventvenue_id'), nullable=False)
     location_details = db.Column(db.String(255), nullable=False)
     admin_id = db.Column(db.String(4), db.ForeignKey('admin.admin_id'), nullable=False)
+
+    tickets = db.relationship('Ticket', backref='event', lazy=True)
+    category = db.relationship('EventCategory', backref='events', lazy=True)
+    venue = db.relationship('EventVenue', backref='events', lazy=True)
 
 class Ticket(db.Model):
     __tablename__ = 'ticket'
