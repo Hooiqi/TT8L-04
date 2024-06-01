@@ -1,8 +1,28 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField, TimeField, DateTimeField, SelectField, FileField, FieldList, FormField, DecimalField, IntegerField
-from wtforms.validators import DataRequired, ValidationError, Optional, Length
+from wtforms import StringField, TextAreaField, DateField, TimeField, DateTimeField, SelectField, PasswordField, FieldList, FormField, DecimalField, IntegerField, SubmitField
+from wtforms.validators import DataRequired, ValidationError, Optional, EqualTo, Length
 from flask_wtf.file import FileField, FileRequired, FileAllowed
+from models import User
 
+class SignupForm(FlaskForm):
+    user_id = StringField('Student ID', validators=[DataRequired(), Length(min=10,max=10)], render_kw={"placeholder": "Student ID"})
+    user_name = StringField('Name', validators=[DataRequired()], render_kw={"placeholder": "Name"})
+    user_email = StringField('Email', validators=[DataRequired()], render_kw={"placeholder": "Email"})
+    user_phone = StringField('Phone number', validators=[DataRequired(), Length(min=10,max=11)], render_kw={"placeholder": "Phone Number (without -)"})
+    user_pwd = PasswordField('Password ', validators=[DataRequired(), EqualTo('confirm_pwd', message='Both password must match. ')], render_kw={"placeholder": "Password"})
+    confirm_pwd = PasswordField('Confirm Password: ', validators=[DataRequired()], render_kw={"placeholder": "Confirm Password"})
+    signup_submit = SubmitField('Sign up')
+
+    def validate_user_id(self, user_id):
+        # Check if the user ID already exists in the database
+        if User.query.filter_by(user_id=user_id.data).first():
+            raise ValidationError("This student ID already exists.")
+
+    def validate_user_email(self, user_email):
+        # Check if the email matches the required format
+        if user_email.data != f"{self.user_id.data}@student.mmu.edu.my":
+            raise ValidationError('Email must be in the format: student_id@student.mmu.edu.my')
+        
 class TicketForm(FlaskForm):
     ticket_type = StringField('Ticket Type', validators=[DataRequired()], render_kw={"placeholder": "Ticket type (required)"})
     price = DecimalField('Price', validators=[DataRequired()])
