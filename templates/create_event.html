@@ -15,7 +15,7 @@
             <h2>Event Details</h2>
             <div class="ce-form-group">
                 {{ form.event_name.label }} 
-                {{ form.event_name(size=32) }}
+                {{ form.event_name() }}
             </div>
             <div class="ce-form-group">
                 {{ form.event_cat.label }}
@@ -38,7 +38,7 @@
                 </div>
                 <div class="ce-form-group">
                     {{ form.duration.label }}
-                    {{ form.duration(size=32) }}
+                    {{ form.duration() }}
                 </div>
             </div>
             <div class="ce-form-group">
@@ -57,7 +57,7 @@
             </div>
             <div class="ce-form-group">
                 {{ form.location_detail.label }}
-                {{ form.location_detail(size=64) }}
+                {{ form.location_detail() }}
             </div>
 
             <h2>Ticket Setup</h2>
