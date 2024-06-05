@@ -15,26 +15,26 @@
             <h2>Event Details</h2>
             <div class="ce-form-group">
                 {{ form.event_name.label }} 
-                {{ form.event_name(value=event.event_name) }}
+                {{ form.event_name() }}
             </div>
             <div class="ce-form-group">
                 {{ form.event_cat.label }}
-                {{ form.event_cat(value=event.category_id) }}
+                {{ form.event_cat() }}
             </div>
             <div class="ce-flex-group">
                 <div class="ce-form-group">
                     {{ form.event_start.label }}
-                    {{ form.event_start(value=event.event_start) }}
+                    {{ form.event_start() }}
                 </div>
                 <div class="ce-form-group">
                     {{ form.event_end.label }}
-                    {{ form.event_end(value=event.event_end) }}
+                    {{ form.event_end() }}
                 </div>
             </div>
             <div class="ce-flex-group">
                 <div class="ce-form-group">
                     {{ form.event_time.label }}
-                    {{ form.event_time(value=event.event_time) }}
+                    {{ form.event_time() }}
                 </div>
                 <div class="ce-form-group">
                     {{ form.duration.label }}
@@ -47,13 +47,13 @@
             </div>
             <div class="form-group">
                 {{ form.event_descr.label }}
-                {{ form.event_descr(cols=40, rows=5, value=event.event_descr) }}
+                {{ form.event_descr(cols=40, rows=5) }}
             </div>
 
             <h2>Event Location</h2>
             <div class="ce-form-group">
                 {{ form.event_venue.label }}
-                {{ form.event_venue(value=event.eventvenue_id) }}
+                {{ form.event_venue() }}
             </div>
             <div class="ce-form-group">
                 {{ form.location_detail.label }}
@@ -76,15 +76,12 @@
                 <tbody id="tickets-tbody">
                     {% for ticket in form.tickets %}
                     <tr>
-                        <td>
-                            {{ ticket.hidden_tag() }}
-                            <input type="text" name="tickets-{{ loop.index0 }}-ticket_type" required value="{{ ticket_data.get(ticket.ticket_id, {}).get('ticket_type', '') }}">
-                        </td>
-                        <td><input type="number" step="0.01" name="tickets-{{ loop.index0 }}-price" required value="{{ ticket_data.get(ticket.ticket_id, {}).get('price', '') }}"></td>
-                        <td><input type="number" step="0.01" name="tickets-{{ loop.index0 }}-member_discount" value="{{ ticket_data.get(ticket.ticket_id, {}).get('member_discount', '') }}"></td>
-                        <td><input type="number" name="tickets-{{ loop.index0 }}-max_quantity" required value="{{ ticket_data.get(ticket.ticket_id, {}).get('max_quantity', '') }}"></td>
-                        <td><input type="date" name="tickets-{{ loop.index0 }}-start_sale" required value="{{ ticket_data.get(ticket.ticket_id, {}).get('start_sale', '') }}"></td>
-                        <td><input type="date" name="tickets-{{ loop.index0 }}-end_sale" value="{{ ticket_data.get(ticket.ticket_id, {}).get('end_sale', '') }}"></td>
+                        <td>{{ ticket.hidden_tag() }} {{ ticket.ticket_type() }}</td>
+                        <td>{{ ticket.price() }}</td>
+                        <td>{{ ticket.member_discount() }}</td>
+                        <td>{{ ticket.max_quantity() }}</td>
+                        <td>{{ ticket.start_sale() }}</td>
+                        <td>{{ ticket.end_sale() }}</td>
                         <td><button type="button" onclick="removeTicketRow(this)">Remove</button></td>
                     </tr>
                     {% endfor %}
@@ -122,12 +119,10 @@
             
             <div class="ce-flex-group">
                 <div class="ce-form-group">
-                    <button type="submit">Save Changes</button>
+                    <button type="submit" name="action" value="delete">Delete Event</button>
                 </div>
                 <div class="ce-form-group">
-                    <form method="POST" action="{{ url_for('delete_event', event_id=event.event_id) }}">
-                        <button type="submit" class="delete-button">Delete Event</button>
-                    </form>
+                    <button type="submit" name="action" value="update">Update Changes</button>
                 </div>
             </div>
         </form>
