@@ -78,50 +78,33 @@ def create_event():
 @app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
 def edit_event(event_id):
     event = Event.query.get_or_404(event_id)
-    form = EventForm(obj=event)  # Prepopulate the form with event data
-    form.event_cat.choices = [("", "--Select an event category--")] + [(cat.category_id, cat.category) for cat in EventCategory.query.all()]
-    form.event_venue.choices = [("", "--Select a location category--")] + [(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
+    form = EventForm(obj=event)
+    form.event_cat.choices = [("", "--Select an event category--")]+[(cat.category_id, cat.category) for cat in EventCategory.query.all()]
+    form.event_venue.choices = [("", "--Select a location category--")]+[(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
 
-    # Set the current value for the SelectField
+    # Set the existing value for the SelectField
     form.event_cat.data = event.category_id
     form.event_venue.data = event.eventvenue_id
-    
-    # Create a dictionary to hold ticket data
-    ticket_data = {}
-    for ticket in event.tickets:
-        ticket_data[ticket.ticket_id] = {
-            'ticket_type': ticket.ticket_type,
-            'price': ticket.price,
-            'member_discount': ticket.member_discount,
-            'max_quantity': ticket.max_quantity,
-            'start_sale': ticket.start_sale,
-            'end_sale': ticket.end_sale,
-        }
 
-    if form.validate_on_submit():
-        # Update event details
-        event.event_name = form.event_name.data
-        event.event_descr = form.event_descr.data
-        event.event_start = form.event_start.data
-        event.event_end = form.event_end.data
-        event.event_time = form.event_time.data
-        event.event_duration = form.duration.data
-        if form.event_img.data:
-            event.event_img = form.event_img.data.read()
-        event.category_id = form.event_cat.data
-        event.eventvenue_id = form.event_venue.data
-        event.location_details = form.location_detail.data
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        if action == 'update' and form.validate_on_submit():
+            event.event_name = form.event_name.data
+            event.event_descr = form.event_descr.data
+            event.event_start = form.event_start.data
+            event.event_end = form.event_end.data
+            event.event_time = form.event_time.data
+            event.event_duration = form.duration.data
+            event.event_img = form.event_img.data.read() if form.event_img.data else event.event_img
+            event.category_id = form.event_cat.data
+            event.eventvenue_id = form.event_venue.data
+            event.location_details = form.location_detail.data
 
-        # Update tickets
-        for ticket_form in form.tickets:
-            ticket = Ticket.query.filter_by(event_id=event_id, ticket_type=ticket_form.ticket_type.data).first()
-            if ticket:
-                ticket.price = ticket_form.price.data
-                ticket.member_discount = ticket_form.member_discount.data
-                ticket.max_quantity = ticket_form.max_quantity.data
-                ticket.start_sale = ticket_form.start_sale.data
-                ticket.end_sale = ticket_form.end_sale.data
-            else:
+            db.session.commit()
+
+            Ticket.query.filter_by(event_id=event_id).delete()
+            for ticket_form in form.tickets:
                 new_ticket = Ticket(
                     event_id=event.event_id,
                     ticket_type=ticket_form.ticket_type.data,
@@ -132,29 +115,20 @@ def edit_event(event_id):
                     end_sale=ticket_form.end_sale.data
                 )
                 db.session.add(new_ticket)
-        db.session.commit()
+            db.session.commit()
 
-        flash('Event and tickets updated successfully!', 'success')
-        return redirect(url_for('edit_event', event_id=event_id))
+            flash('Event updated successfully!', 'success')
+            return redirect(url_for('edit_event', event_id=event_id))
+        
+        elif action == 'delete':
+            Ticket.query.filter_by(event_id=event_id).delete()
+            db.session.delete(event)
+            db.session.commit()
+            flash('Event deleted successfully!', 'success')
+            return redirect(url_for('create_event'))
 
-    return render_template('edit_event.html', form=form, event=event, ticket_data=ticket_data)
+    return render_template('edit_event.html', form=form, event=event)
 
-@app.route('/delete_event/<int:event_id>', methods=['POST'])
-def delete_event(event_id):
-    event = Event.query.get_or_404(event_id)
-    
-    try:
-        # Delete associated tickets first
-        Ticket.query.filter_by(event_id=event_id).delete()
-        # Delete the event
-        db.session.delete(event)
-        db.session.commit()
-        flash('Event and associated tickets deleted successfully!', 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error deleting event: {str(e)}', 'danger')
-    
-    return redirect(url_for('create_event'))
 
 if __name__ == "__main__":
     app.run(debug=True)
