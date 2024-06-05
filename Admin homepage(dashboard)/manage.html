@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Event</title>
+  <link rel="stylesheet" href="stylee.css">
+    <style>
+      div.container {
+        border: 1px solid rgb(22, 1, 1);
+        height: 100px;
+        width: 680px;
+        padding: 12px;
+        background-color: rgb(247, 244, 239);
+      }
+
+
+      input{
+        height: 45px;
+        padding-left: 12px;
+      }
+
+      .buttons{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+      }
+
+      .buttons button{
+        width: 100px;
+        height: 30px;
+        margin-left: 20px;
+        border-radius: 8px;
+        border: none;;;
+        color: #F3F3F3;
+      }
+
+      .buttons button:hover{
+        background-color: #bd8e57;
+      }
+
+      button.edit{
+        background: #865e3b;
+      }
+
+      button.delete{
+        background: #865e3b;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div class="manage-event">
+      <h1>Manage Event</h1>
+      <h2>Event 1</h2>
+     <div class="container">
+       <div class="input">
+         <input type="text" placeholder="Event Name" />
+       </div>
+       <div class="buttons">
+         <button class="edit">Edit</button>
+         <button class="delete">Delete</button>
+        </div>
+     </div>
+      <h2>Event 2</h2>
+     <div class="container">
+       <div class="input">
+          <input type="text" placeholder="Event Name" />
+        </div>
+        <div class="buttons">
+          <button class="edit">Edit</button>
+          <button class="delete">Delete</button>
+       </div>
+     </div>
+     <h2>Event 3</h2>
+     <div class="container">
+       <div class="input">
+          <input type="text" placeholder="Event Name" />
+        </div>
+        <div class="buttons">
+          <button class="edit">Edit</button>
+          <button class="delete">Delete</button>
+       </div>
+     </div> 
+    </div>
+  </body>
+</html>
