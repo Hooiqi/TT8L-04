@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/8d1db3e4f7.js" crossorigin="anonymous"></script>
     <link rel="icon" href="https://www.mmu.edu.my/favicon.ico" type="image/x-icon" />
-    <title>Hello! </title>
+    <title>MMU Event </title>
     
 </head>
 
@@ -27,13 +27,14 @@
       
       <div class="right">
         <ul>
+          <li><a href="Homepage.html">Home</a></li>
           <li><a href="#">Profile</a></li>
           <li><a href="#">About Us</a></li>
-          <li><a href="#">Organisers</a></li>
+          <li><a href="organizer.html">Organisers</a></li>
           <div class="dropdown">
             <button class="dropbtn">Event <i class="fa fa-caret-down"></i></button>
             <div class="dropdown-content">
-              <a href="#">All</a>
+              <a href="event-all.html">All</a>
               <a href="#">Sports</a>
               <a href="#">Academic</a>
               <a href="#">Entertainment</a>
@@ -156,45 +157,12 @@ function showSlides(n) {
           <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
       </div>
   </div>
-  <div class="event-container">
-    <div class="event-img parallax">
-        <img src="images/img1.jpg" alt="Event 2" class="event-cover">
-    </div>
-    <div class="event-details">
-        <h3>Event 2</h3>
-        <p>Description of Event 2</p>
-        <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
-    </div>
-</div>
-<div class="event-container">
-  <div class="event-img parallax">
-      <img src="images/img2.jpg" alt="Event 2" class="event-cover">
-  </div>
-  <div class="event-details">
-      <h3>Event 2</h3>
-      <p>Description of Event 2</p>
-      <button class="view-details-btn" onclick="viewDetails(2)">View Details</button>
-  </div>
-</div>
+  
 </div>
 </div>
 
-<button class="scroll-button scroll-button-left" onclick="scrollLeft()">&#10094;</button>
-<button class="scroll-button scroll-button-right" onclick="scrollRight()">&#10095;</button>
+<div class="footer"><span> MMU Event @2024. All rights reserved.</span></div>
 
-
-
-<script>
-function scrollLeft() {
-    const container = document.getElementById('eventSliderContainer');
-    container.scrollLeft -= 100; // Adjust scroll distance as needed
-}
-
-function scrollRight() {
-    const container = document.getElementById('eventSliderContainer');
-    container.scrollLeft += 100; // Adjust scroll distance as needed
-}
-</script>
 
 
 
