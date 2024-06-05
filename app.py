@@ -82,6 +82,10 @@ def edit_event(event_id):
     form.event_cat.choices = [("", "--Select an event category--")] + [(cat.category_id, cat.category) for cat in EventCategory.query.all()]
     form.event_venue.choices = [("", "--Select a location category--")] + [(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
 
+    # Set the current value for the SelectField
+    form.event_cat.data = event.category_id
+    form.event_venue.data = event.eventvenue_id
+    
     # Create a dictionary to hold ticket data
     ticket_data = {}
     for ticket in event.tickets:
