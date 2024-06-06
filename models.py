@@ -64,32 +64,32 @@ class Admin(db.Model):
 class Event(db.Model):
     __tablename__ = 'event'
     event_id = db.Column(db.Integer, primary_key=True)
-    event_name = db.Column(db.String(100), nullable=False)
-    event_descr = db.Column(db.Text, nullable=False)
-    event_start = db.Column(db.Date, nullable=False)
-    event_end = db.Column(db.Date, nullable=False)
-    event_time = db.Column(db.Time, nullable=False)
-    event_duration = db.Column(db.String(50), nullable=False)
-    event_img = db.Column(db.LargeBinary, nullable=False)
-    category_id = db.Column(db.String(3), db.ForeignKey('event_category.category_id'), nullable=False)
-    eventvenue_id = db.Column(db.String(3), db.ForeignKey('event_venue.eventvenue_id'), nullable=False)
-    location_details = db.Column(db.String(255), nullable=False)
+    event_name = db.Column(db.String(100))
+    event_descr = db.Column(db.Text)
+    event_start = db.Column(db.Date)
+    event_end = db.Column(db.Date)
+    event_time = db.Column(db.Time)
+    event_duration = db.Column(db.String(50))
+    event_img = db.Column(db.LargeBinary)
+    category_id = db.Column(db.String(3), db.ForeignKey('event_category.category_id'))
+    eventvenue_id = db.Column(db.String(3), db.ForeignKey('event_venue.eventvenue_id'))
+    location_details = db.Column(db.String(255))
     admin_id = db.Column(db.String(4), db.ForeignKey('admin.admin_id'), nullable=False)
 
     tickets = db.relationship('Ticket', backref='event', lazy=True)
-    category = db.relationship('EventCategory', backref='events', lazy=True)
-    venue = db.relationship('EventVenue', backref='events', lazy=True)
+#    category = db.relationship('EventCategory', backref='events', lazy=True)
+#   venue = db.relationship('EventVenue', backref='events', lazy=True)
 
 class Ticket(db.Model):
     __tablename__ = 'ticket'
     ticket_id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.event_id'), nullable=False)
-    ticket_type = db.Column(db.String(50), nullable=False)
-    price = db.Column(db.Numeric(10, 2), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.event_id'))
+    ticket_type = db.Column(db.String(50))
+    price = db.Column(db.Numeric(10, 2))
     member_discount = db.Column(db.Numeric(10, 2))
-    max_quantity = db.Column(db.Integer, nullable=False)
-    start_sale = db.Column(db.Date, nullable=False)
-    end_sale = db.Column(db.Date, nullable=False)
+    max_quantity = db.Column(db.Integer)
+    start_sale = db.Column(db.Date)
+    end_sale = db.Column(db.Date)
 
 class EventVenue(db.Model):
     __tablename__ = 'event_venue'
