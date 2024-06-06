@@ -40,39 +40,77 @@ def create_event():
     form.event_cat.choices = [("", "--Select an event category--")]+[(cat.category_id, cat.category) for cat in EventCategory.query.all()]
     form.event_venue.choices = [("", "--Select a location category--")]+[(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
 
-    if form.validate_on_submit():
-        new_event = Event(
-            event_name=form.event_name.data,
-            event_descr=form.event_descr.data,
-            event_start=form.event_start.data,
-            event_end=form.event_end.data,
-            event_time=form.event_time.data,
-            event_duration=form.duration.data,
-            event_img=form.event_img.data.read() if form.event_img.data else None,
-            category_id=form.event_cat.data,
-            eventvenue_id=form.event_venue.data,
-            location_details=form.location_detail.data,
-            admin_id='A001'  # Replace with dynamic admin ID
-        )
-        db.session.add(new_event)
-        db.session.commit()
-
-        for ticket_form in form.tickets:
-            new_ticket = Ticket(
-                event_id=new_event.event_id,
-                ticket_type=ticket_form.ticket_type.data,
-                price=ticket_form.price.data,
-                member_discount=ticket_form.member_discount.data,
-                max_quantity=ticket_form.max_quantity.data,
-                start_sale=ticket_form.start_sale.data,
-                end_sale=ticket_form.end_sale.data
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        if action == 'save':
+            # Process saving data (without validation)
+            new_event = Event(
+                event_name=form.event_name.data,
+                event_descr=form.event_descr.data,
+                event_start=form.event_start.data,
+                event_end=form.event_end.data,
+                event_time=form.event_time.data,
+                event_duration=form.duration.data,
+                event_img=form.event_img.data.read() if form.event_img.data else None,
+            category_id = form.event_cat.data if form.event_cat.data else None,
+            eventvenue_id = form.event_venue.data if form.event_venue.data else None,
+                location_details=form.location_detail.data,
+                admin_id='A001'  # Replace with dynamic admin ID
             )
-            db.session.add(new_ticket)
-        db.session.commit()
+            db.session.add(new_event)
+            db.session.commit()
 
-        flash('Event and tickets created successfully!', 'success')
-        return redirect(url_for('create_event'))
+            for ticket_form in form.tickets:
+                new_ticket = Ticket(
+                    event_id=new_event.event_id,
+                    ticket_type=ticket_form.ticket_type.data,
+                    price=ticket_form.price.data,
+                    member_discount=ticket_form.member_discount.data,
+                    max_quantity=ticket_form.max_quantity.data,
+                    start_sale=ticket_form.start_sale.data,
+                    end_sale=ticket_form.end_sale.data
+                )
+                db.session.add(new_ticket)
+            db.session.commit()
 
+            flash('Event saved successfully!', 'success')
+            return redirect(url_for('create_event'))
+
+        elif action == 'publish' and form.validate_on_submit():
+            # Process form submission with validation
+            new_event = Event(
+                event_name=form.event_name.data,
+                event_descr=form.event_descr.data,
+                event_start=form.event_start.data,
+                event_end=form.event_end.data,
+                event_time=form.event_time.data,
+                event_duration=form.duration.data,
+                event_img=form.event_img.data.read() if form.event_img.data else None,
+                category_id=form.event_cat.data,
+                eventvenue_id=form.event_venue.data,
+                location_details=form.location_detail.data,
+                admin_id='A001'  # Replace with dynamic admin ID
+            )
+            db.session.add(new_event)
+            db.session.commit()
+
+            for ticket_form in form.tickets:
+                new_ticket = Ticket(
+                    event_id=new_event.event_id,
+                    ticket_type=ticket_form.ticket_type.data,
+                    price=ticket_form.price.data,
+                    member_discount=ticket_form.member_discount.data,
+                    max_quantity=ticket_form.max_quantity.data,
+                    start_sale=ticket_form.start_sale.data,
+                    end_sale=ticket_form.end_sale.data
+                )
+                db.session.add(new_ticket)
+            db.session.commit()
+
+            flash('Event and tickets created successfully!', 'success')
+            return redirect(url_for('create_event'))
+    
     return render_template('create_event.html', form=form)
 
 @app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
@@ -89,6 +127,7 @@ def edit_event(event_id):
     if request.method == 'POST':
         action = request.form.get('action')
         
+        #Update on event and tickets
         if action == 'update' and form.validate_on_submit():
             event.event_name = form.event_name.data
             event.event_descr = form.event_descr.data
@@ -120,6 +159,7 @@ def edit_event(event_id):
             flash('Event updated successfully!', 'success')
             return redirect(url_for('edit_event', event_id=event_id))
         
+        #Delete event and related tickets
         elif action == 'delete':
             Ticket.query.filter_by(event_id=event_id).delete()
             db.session.delete(event)
