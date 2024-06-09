@@ -75,10 +75,11 @@ class Event(db.Model):
     eventvenue_id = db.Column(db.String(3), db.ForeignKey('event_venue.eventvenue_id'))
     location_details = db.Column(db.String(255))
     admin_id = db.Column(db.String(4), db.ForeignKey('admin.admin_id'), nullable=False)
+    publish_status = db.Column(db.String(45), nullable=False)
 
     tickets = db.relationship('Ticket', backref='event', lazy=True)
-#    category = db.relationship('EventCategory', backref='events', lazy=True)
-#   venue = db.relationship('EventVenue', backref='events', lazy=True)
+    category = db.relationship('EventCategory', backref='events', lazy=True)
+    venue = db.relationship('EventVenue', backref='events', lazy=True)
 
 class Ticket(db.Model):
     __tablename__ = 'ticket'
