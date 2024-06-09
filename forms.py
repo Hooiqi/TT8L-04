@@ -24,7 +24,7 @@ class SignupForm(FlaskForm):
             raise ValidationError('Email must be in the format: student_id@student.mmu.edu.my')
         
 class TicketForm(FlaskForm):
-    ticket_type = StringField('Ticket Type', validators=[DataRequired()], render_kw={"placeholder": "Ticket type (required)"})
+    ticket_type = StringField('Ticket Type', validators=[DataRequired()], render_kw={"placeholder": "Ticket type*"})
     price = DecimalField('Price', validators=[DataRequired()])
     member_discount = DecimalField('Member Price', validators=[Optional()])
     max_quantity = IntegerField('Quantity', validators=[DataRequired()])
@@ -36,17 +36,18 @@ class TicketForm(FlaskForm):
             raise ValidationError('End sale date should be more than start sale date.')
 
 class EventForm(FlaskForm):
-    event_name = StringField('Name', validators=[DataRequired()], render_kw={"placeholder": "Event name (required)"})
+    event_name = StringField('Name', validators=[DataRequired()], render_kw={"placeholder": "Event name*"})
     event_cat = SelectField('Category', choices=[('C01', 'Academic'), ('C02', 'Entertainments'), ('C03', 'Sports'), ('C04', 'Others')], validators=[DataRequired()])
     event_start = DateField('Start Date', validators=[DataRequired()])
     event_end = DateField('End Date', validators=[DataRequired()])
     event_time = TimeField('Start Time', validators=[DataRequired()])
-    duration = StringField('Duration', validators=[DataRequired()], render_kw={"placeholder": "hour / minute (required)"})
+    duration = StringField('Duration', validators=[DataRequired()], render_kw={"placeholder": "hour / minute *"})
     event_img = FileField('Poster (max. file size 16MB)', validators=[FileRequired(), FileAllowed(['jpg','jpeg','png'])])
-    event_descr = TextAreaField('Description', validators=[DataRequired()], render_kw={"placeholder": "Event details (required)"})
+    event_descr = TextAreaField('Description', validators=[DataRequired()], render_kw={"placeholder": "Event details*"})
     event_venue = SelectField('Location type', choices=[('V01', 'On campus'), ('V02', 'Off campus'), ('V03', 'Online')], validators=[DataRequired()])
-    location_detail = StringField('Location details',  validators=[DataRequired()], render_kw={"placeholder": "Location details (required)"})
+    location_detail = StringField('Location details',  validators=[DataRequired()], render_kw={"placeholder": "Location details*"})
     tickets = FieldList(FormField(TicketForm), min_entries=1)
+    publish_status = StringField('Publish Status', validators=[DataRequired()])
 
     def validate_event_end(self, filed):
         if filed.data < self.event_start.data:
