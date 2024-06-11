@@ -27,7 +27,7 @@ class SignupForm(FlaskForm):
 class TicketForm(FlaskForm):
     ticket_type = StringField('Ticket Type', validators=[DataRequired()], render_kw={"placeholder": "Ticket type*"})
     price = DecimalField('Normal Price', validators=[InputRequired(), NumberRange(min=0)], render_kw={"placeholder": "Normal price*"})
-    member_discount = DecimalField('Member Price', validators=[InputRequired(), NumberRange(min=0)], render_kw={"placeholder": "Member price"})
+    member_discount = DecimalField('Member Price', validators=[InputRequired(), NumberRange(min=0)], render_kw={"placeholder": "Member price*"})
     max_quantity = IntegerField('Quantity', validators=[DataRequired()], render_kw={"placeholder": "Quantity*"})
     start_sale = DateField('Start Sale', validators=[DataRequired()])
     end_sale = DateField('End Sale', validators=[DataRequired()])
