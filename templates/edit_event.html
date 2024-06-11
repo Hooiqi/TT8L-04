@@ -13,6 +13,32 @@
         <button class="tab-button" onclick="openTab(event, 'editEvent')" id="defaultOpen">EDIT EVENT</button>
         <button class="tab-button" onclick="openTab(event, 'previewEvent')">PREVIEW EVENT</button>
     </div>
+    
+    <!-- error/success messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    <span class="closebtn">&times;</span>  
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <!-- close button for messages -->
+    <script>
+        var close = document.getElementsByClassName("closebtn");
+        var i;
+
+        for (i = 0; i < close.length; i++) {
+            close[i].onclick = function(){
+                var div = this.parentElement;
+                div.style.opacity = "0";
+                setTimeout(function(){ div.style.display = "none"; }, 600);
+            }
+        }
+    </script>
 
     <!-- Edit Event -->
     <div id="editEvent" class="tab-content">
@@ -106,9 +132,9 @@
     
                         row.innerHTML = `
                             <td><input type="hidden" name="tickets-${index}-csrf_token" value="{{ csrf_token() }}"><input type="text" name="tickets-${index}-ticket_type" required></td>
-                            <td><input type="number" step="0.01" name="tickets-${index}-price" required></td>
-                            <td><input type="number" step="0.01" name="tickets-${index}-member_discount" required></td>
-                            <td><input type="number" name="tickets-${index}-max_quantity" required></td>
+                            <td><input type="number" step="0.01" name="tickets-${index}-price" placeholder="Normal price*" required></td>
+                            <td><input type="number" step="0.01" name="tickets-${index}-member_discount" placeholder="Member price*" required></td>
+                            <td><input type="number" name="tickets-${index}-max_quantity" placeholder="Quantity*" required></td>
                             <td><input type="date" name="tickets-${index}-start_sale" required></td>
                             <td><input type="date" name="tickets-${index}-end_sale"></td>
                             <td><button type="button" onclick="removeTicketRow(this)">Remove</button></td>
@@ -136,7 +162,7 @@
                 </div>
                 
                 <button type="submit" name="action" value="edit-publish" 
-                onclick="return confirm('Are you sure you want to publish this event? ');">Publish Event</button>
+                onclick="return confirm('Event cannot be edited once published. \nAre you sure you want to publish this event? ');">Publish Event</button>
             </form>
         </div>
     </div>
@@ -145,11 +171,16 @@
     <div id="previewEvent" class="tab-content">
         <div class="create-event-container">
             <form class="create-event-form">
-                <h1 style="font-size: 40px">{{ event.event_name }}</h1>
-                <div class="poster-container">
-                    <div class="poster-background-blur" style="background-image: url('{{ url_for('static', filename='images/' ~ (event.event_img or 'default_poster.png')) }}');"></div>
-                    <img src="{{ url_for('static', filename='images/' ~ (event.event_img or 'default_poster.png')) }}" alt="Event Image" class="poster-foreground-image">
-                </div>
+                <h1 style="font-size: 40px; text-align: center;">{{ event.event_name }}</h1>
+
+                <!-- Display image if exists -->
+                {% if event.event_img != None: %}
+                    <div class="poster-container">
+                        <div class="poster-background-blur" style="background-image: url('{{ url_for('static', filename='images/' ~ event.event_img) }}');"></div>
+                        <img src="{{ url_for('static', filename='images/' ~ event.event_img) }}" alt="Event Poster" class="poster-foreground-image">
+                    </div>
+                {% endif %}
+
                 <div class="event-detail-container">
                     <div class="event-section">
                         <table class="event-display">
@@ -163,11 +194,18 @@
                             </tr>
                             <tr>
                                 <th>Date</th>
-                                <td>{{ event.event_start }} - {{ event.event_end }}</td>
+                                <td>
+                                    <!-- Manage display for one-day/multi-day event -->
+                                    {% if event.event_start == event.event_end: %}
+                                        {{ event.event_start_formatted }}
+                                    {% else %}
+                                        {{ event.event_start_formatted }} - {{ event.event_end_formatted }}
+                                    {% endif %}
+                                </td>
                             </tr>
                             <tr>
                                 <th>Start Time</th>
-                                <td>{{ event.event_time }}</td>
+                                <td>{{ event.event_time_formatted }}</td>
                             </tr>
                             <tr>
                                 <th>Duration</th>
@@ -177,11 +215,12 @@
                         <h2>About this event</h2>
                         <table>
                             <tr>
-                                <td>{{ event.event_descr }}</td>
+                                <!-- Render text into multiline -->
+                                <td>{{ event.event_descr.replace('\n', '<br>') | safe }}</td>
                             </tr>
                         </table>
                     </div>
-                    <br><br>
+                    
                     <div class="ticket-section">
                         <h2>Tickets</h2>
                         <!-- Display tickets -->
@@ -189,14 +228,20 @@
                         <div class="ticket-container">
                             <div class="ticket-detail">
                                 <h3>{{ ticket.ticket_type }}</h3>
-                                <div class="prices">
-                                    <label for="normal-price">Normal Price: </label>
-                                    <label for="normal-price">RM {{ ticket.price }}</label>
-                                </div>
-                                <div class="prices">
-                                    <label for="member-price">Member Price: </label>
-                                    <label for="member-price">RM {{ ticket.member_discount }}</label>
-                                </div>
+
+                                {% if ticket.price == 0.00 and ticket.member_discount == 0.00: %}
+                                    <label for="price">Free</label>
+                                {% else %}
+                                    <div class="prices">
+                                        <label for="normal-price">Normal Price: </label>
+                                        <label for="normal-price">RM {{ ticket.price }}</label>
+                                    </div>
+                                    <div class="prices">
+                                        <label for="member-price">Member Price: </label>
+                                        <label for="member-price">RM {{ ticket.member_discount }}</label>
+                                    </div>
+                                {% endif %}
+
                             </div>
                             
                             <div class="quantity-select">
@@ -215,8 +260,8 @@
         </div>
     </div>
 
-    <!-- javascript to manage tabbed navigation -->
     <script>
+        /* Tabbed navigation */
         function openTab(evt, tabName) {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tab-content");
