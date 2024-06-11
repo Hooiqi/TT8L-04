@@ -26,8 +26,8 @@
         {% endif %}
     {% endwith %}
     
-    <!-- close button for messages -->
     <script>
+        /* Close button on flash message */
         var close = document.getElementsByClassName("closebtn");
         var i;
 
@@ -38,6 +38,12 @@
                 setTimeout(function(){ div.style.display = "none"; }, 600);
             }
         }
+        
+        /* Popup message if reload page */
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault(); 
+            e.returnValue = '';
+        });
     </script>
 
     <!-- Edit Event -->
