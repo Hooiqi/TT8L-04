@@ -39,10 +39,24 @@
             }
         }
         
-        /* Popup message if reload page */
+        /* Popup message if reload page */   
         window.addEventListener('beforeunload', function (e) {
-            e.preventDefault(); 
-            e.returnValue = '';
+            var formSubmitting = document.querySelector('button[type="submit"][data-form-submitting="true"]');
+            if (!formSubmitting) {
+                var confirmationMessage = 'Changes you made may not be saved.';
+                (e || window.event).returnValue = confirmationMessage; // Gecko + IE
+                return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
+            }
+        });
+
+        // Add event listener to all submit buttons to set data attribute
+        document.addEventListener('DOMContentLoaded', function () {
+            var submitButtons = document.querySelectorAll('button[type="submit"]');
+            submitButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    button.setAttribute('data-form-submitting', 'true');
+                });
+            });
         });
     </script>
 
@@ -137,7 +151,7 @@
                         const row = document.createElement('tr');
     
                         row.innerHTML = `
-                            <td><input type="hidden" name="tickets-${index}-csrf_token" value="{{ csrf_token() }}"><input type="text" name="tickets-${index}-ticket_type" required></td>
+                            <td><input type="hidden" name="tickets-${index}-csrf_token" value="{{ csrf_token() }}"><input type="text" name="tickets-${index}-ticket_type" placeholder="Ticket type*" required></td>
                             <td><input type="number" step="0.01" name="tickets-${index}-price" placeholder="Normal price*" required></td>
                             <td><input type="number" step="0.01" name="tickets-${index}-member_discount" placeholder="Member price*" required></td>
                             <td><input type="number" name="tickets-${index}-max_quantity" placeholder="Quantity*" required></td>
@@ -168,7 +182,7 @@
                 </div>
                 
                 <button type="submit" name="action" value="edit-publish" 
-                onclick="return confirm('Event cannot be edited once published. \nAre you sure you want to publish this event? ');">Publish Event</button>
+                onclick="return confirm('Are you sure you want to publish this event? \nEvent cannot be edited once published. ');">Publish Event</button>
             </form>
         </div>
     </div>
