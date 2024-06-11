@@ -43,8 +43,8 @@ def signup():
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
     form = EventForm()
-    form.event_cat.choices = [("", "--Select an event category--")] + [(cat.category_id, cat.category) for cat in EventCategory.query.all()]
-    form.event_venue.choices = [("", "--Select a location category--")] + [(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
+    form.event_cat.choices = [("", "--Select an event category*--")] + [(cat.category_id, cat.category) for cat in EventCategory.query.all()]
+    form.event_venue.choices = [("", "--Select a location category*--")] + [(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
 
     if request.method == 'POST':
         action = request.form.get('action')
@@ -87,7 +87,7 @@ def create_event():
                 db.session.add(new_ticket)
             db.session.commit()
 
-            flash('Event saved successfully!' if action == 'save' else 'Event and tickets created successfully!', 'success')
+            flash('Event saved successfully!' if action == 'save' else 'Event published successfully!', 'success')
             return redirect(url_for('create_event'))
         
         else:
@@ -103,7 +103,7 @@ def create_event():
                     for error in errors:
                         flash(f"Ticket '{ticket_form.ticket_type.data}': {getattr(ticket_form, field).label.text} - {error}", 'error')
 
-            flash(f"Failed to save event!", 'error')
+            flash('Failed to save event!' if action == 'save' else 'Failed to publish event!', 'error')
 
     return render_template('create_event.html', form=form)
 
@@ -111,12 +111,17 @@ def create_event():
 def edit_event(event_id):
     event = Event.query.get_or_404(event_id)
     form = EventForm(obj=event)
-    form.event_cat.choices = [("", "--Select an event category--")] + [(cat.category_id, cat.category) for cat in EventCategory.query.all()]
-    form.event_venue.choices = [("", "--Select a location category--")] + [(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
+    form.event_cat.choices = [("", "--Select an event category*--")] + [(cat.category_id, cat.category) for cat in EventCategory.query.all()]
+    form.event_venue.choices = [("", "--Select a location category*--")] + [(ven.eventvenue_id, ven.location) for ven in EventVenue.query.all()]
 
     #Pre-populate data for category and venue
     form.event_cat.data = event.category_id
     form.event_venue.data = event.eventvenue_id
+
+    # Format event_start and event_time for display
+    event.event_start_formatted = event.event_start.strftime('%A, %B %d, %Y')
+    event.event_end_formatted = event.event_end.strftime('%A, %B %d, %Y')
+    event.event_time_formatted = event.event_time.strftime('%I:%M %p')
 
     if request.method == 'POST':
         action = request.form.get('action')
@@ -168,7 +173,7 @@ def edit_event(event_id):
                     db.session.add(new_ticket)
                 db.session.commit()
 
-                flash('Event updated successfully!' if action == 'update' else 'Event and tickets updated successfully!', 'success')
+                flash('Changes saved successfully!' if action == 'update' else 'Event published successfully!', 'success')
                 return redirect(url_for('edit_event', event_id=event_id))
             
             else:
@@ -176,15 +181,15 @@ def edit_event(event_id):
                 for field, errors in form.errors.items():
                     if field != 'tickets':
                         for error in errors:
-                            flash(f"{getattr(form, field).label.text} - {error}", 'error')
+                            flash(f"{getattr(form, field).label.text} - {error}", 'danger')
 
                 # Flash errors for tickets
                 for i, ticket_form in enumerate(form.tickets):
                     for field, errors in ticket_form.errors.items():
                         for error in errors:
-                            flash(f"Ticket '{ticket_form.ticket_type.data}': {getattr(ticket_form, field).label.text} - {error}", 'error')
-
-                flash(f"Failed to save event!", 'error')
+                            flash(f"Ticket '{ticket_form.ticket_type.data}': {getattr(ticket_form, field).label.text} - {error}", 'danger')
+                            
+                flash('Failed to save event!' if action == 'save' else 'Failed to publish event!', 'danger')
 
     return render_template('edit_event.html', form=form, event=event)
 
