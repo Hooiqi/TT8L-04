@@ -189,7 +189,7 @@ def edit_event(event_id):
                         for error in errors:
                             flash(f"Ticket '{ticket_form.ticket_type.data}': {getattr(ticket_form, field).label.text} - {error}", 'danger')
                             
-                flash('Failed to save event!' if action == 'save' else 'Failed to publish event!', 'danger')
+                flash('Failed to save event!' if action == 'update' else 'Failed to publish event!', 'danger')
 
     return render_template('edit_event.html', form=form, event=event)
 
