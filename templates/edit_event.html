@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Event{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Navigate to tab -->
+    <div class="tab-container">
+        <button class="tab-button" onclick="openTab(event, 'editEvent')" id="defaultOpen">EDIT EVENT</button>
+        <button class="tab-button" onclick="openTab(event, 'previewEvent')">PREVIEW EVENT</button>
+    </div>
+    
+    <!-- error/success messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    <span class="closebtn">&times;</span>  
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <script>
+        /* Close button on flash message */
+        var close = document.getElementsByClassName("closebtn");
+        var i;
+
+        for (i = 0; i < close.length; i++) {
+            close[i].onclick = function(){
+                var div = this.parentElement;
+                div.style.opacity = "0";
+                setTimeout(function(){ div.style.display = "none"; }, 600);
+            }
+        }
+        
+        /* Popup message if reload page */   
+        window.addEventListener('beforeunload', function (e) {
+            var formSubmitting = document.querySelector('button[type="submit"][data-form-submitting="true"]');
+            if (!formSubmitting) {
+                var confirmationMessage = 'Changes you made may not be saved.';
+                (e || window.event).returnValue = confirmationMessage; // Gecko + IE
+                return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
+            }
+        });
+
+        // Add event listener to all submit buttons to set data attribute
+        document.addEventListener('DOMContentLoaded', function () {
+            var submitButtons = document.querySelectorAll('button[type="submit"]');
+            submitButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    button.setAttribute('data-form-submitting', 'true');
+                });
+            });
+        });
+    </script>
+
+    <!-- Edit Event -->
+    <div id="editEvent" class="tab-content">
+        <div class="create-event-container">
+            <form class="create-event-form" method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <h1>Edit Event</h1>
+                <h2>Event Details</h2>
+                <div class="ce-form-group">
+                    {{ form.event_name.label }} 
+                    {{ form.event_name() }}
+                </div>
+                <div class="ce-form-group">
+                    {{ form.event_cat.label }}
+                    {{ form.event_cat() }}
+                </div>
+                <div class="ce-flex-group">
+                    <div class="ce-form-group">
+                        {{ form.event_start.label }}
+                        {{ form.event_start() }}
+                    </div>
+                    <div class="ce-form-group">
+                        {{ form.event_end.label }}
+                        {{ form.event_end() }}
+                    </div>
+                </div>
+                <div class="ce-flex-group">
+                    <div class="ce-form-group">
+                        {{ form.event_time.label }}
+                        {{ form.event_time() }}
+                    </div>
+                    <div class="ce-form-group">
+                        {{ form.duration.label }}
+                        {{ form.duration(value=event.event_duration) }}
+                    </div>
+                </div>
+                <div class="ce-form-group">
+                    {{ form.event_img.label }}
+                    {{ form.event_img() }}
+                </div>
+                <div class="form-group">
+                    {{ form.event_descr.label }}
+                    {{ form.event_descr(cols=40, rows=5) }}
+                </div>
+    
+                <h2>Event Location</h2>
+                <div class="ce-form-group">
+                    {{ form.event_venue.label }}
+                    {{ form.event_venue() }}
+                </div>
+                <div class="ce-form-group">
+                    {{ form.location_detail.label }}
+                    {{ form.location_detail(value=event.location_details) }}
+                </div>
+    
+                <h2>Ticket Setup</h2>
+                <table class="add-ticket" id="tickets-table">
+                    <thead>
+                        <tr>
+                            <th>Ticket Type</th>
+                            <th>Price (RM)</th>
+                            <th>Member Price (RM)</th>
+                            <th>Quantity</th>
+                            <th>Start Sale</th>
+                            <th>End Sale</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tickets-tbody">
+                        {% for ticket in form.tickets %}
+                        <tr>
+                            <td>{{ ticket.hidden_tag() }} {{ ticket.ticket_type() }}</td>
+                            <td>{{ ticket.price() }}</td>
+                            <td>{{ ticket.member_discount() }}</td>
+                            <td>{{ ticket.max_quantity() }}</td>
+                            <td>{{ ticket.start_sale() }}</td>
+                            <td>{{ ticket.end_sale() }}</td>
+                            <td><button type="button" onclick="removeTicketRow(this)">Remove</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="button" onclick="addTicketRow()">Add Ticket</button>
+    
+                <script>
+                    function addTicketRow() {
+                        const tbody = document.getElementById('tickets-tbody');
+                        const index = tbody.children.length;
+    
+                        const row = document.createElement('tr');
+    
+                        row.innerHTML = `
+                            <td><input type="hidden" name="tickets-${index}-csrf_token" value="{{ csrf_token() }}"><input type="text" name="tickets-${index}-ticket_type" placeholder="Ticket type*" required></td>
+                            <td><input type="number" step="0.01" name="tickets-${index}-price" placeholder="Normal price*" required></td>
+                            <td><input type="number" step="0.01" name="tickets-${index}-member_discount" placeholder="Member price*" required></td>
+                            <td><input type="number" name="tickets-${index}-max_quantity" placeholder="Quantity*" required></td>
+                            <td><input type="date" name="tickets-${index}-start_sale" required></td>
+                            <td><input type="date" name="tickets-${index}-end_sale"></td>
+                            <td><button type="button" onclick="removeTicketRow(this)">Remove</button></td>
+                        `;
+    
+                        tbody.appendChild(row);
+                    }
+    
+                    function removeTicketRow(button) {
+                        const row = button.closest('tr');
+                        row.remove();
+                    }
+                </script>
+                
+                <br><br><br>
+                
+                <div class="ce-flex-group">
+                    <div class="ce-form-group">
+                        <button type="submit" name="action" value="delete" formnovalidate="formnovalidate" 
+                        onclick="return confirm('Are you sure you want to delete this event?');">Delete Event</button>
+                    </div>
+                    <div class="ce-form-group">
+                        <button type="submit" name="action" value="update">Save Changes</button>
+                    </div>
+                </div>
+                
+                <button type="submit" name="action" value="edit-publish" 
+                onclick="return confirm('Are you sure you want to publish this event? \nEvent cannot be edited once published. ');">Publish Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Preview Event -->
+    <div id="previewEvent" class="tab-content">
+        <div class="create-event-container">
+            <form class="create-event-form">
+                <h1 style="font-size: 40px; text-align: center;">{{ event.event_name }}</h1>
+
+                <!-- Display image if exists -->
+                {% if event.event_img != None: %}
+                    <div class="poster-container">
+                        <div class="poster-background-blur" style="background-image: url('{{ url_for('static', filename='images/' ~ event.event_img) }}');"></div>
+                        <img src="{{ url_for('static', filename='images/' ~ event.event_img) }}" alt="Event Poster" class="poster-foreground-image">
+                    </div>
+                {% endif %}
+
+                <div class="event-detail-container">
+                    <div class="event-section">
+                        <table class="event-display">
+                            <tr>
+                                <th>Organiser</th>
+                                <td>{{ event.admin.admin_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Location/Platform</th>
+                                <td>{{ event.location_details }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date</th>
+                                <td>
+                                    <!-- Manage display for one-day/multi-day event -->
+                                    {% if event.event_start == event.event_end: %}
+                                        {{ event.event_start_formatted }}
+                                    {% else %}
+                                        {{ event.event_start_formatted }} - {{ event.event_end_formatted }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Start Time</th>
+                                <td>{{ event.event_time_formatted }}</td>
+                            </tr>
+                            <tr>
+                                <th>Duration</th>
+                                <td>{{ event.event_duration }}</td>
+                            </tr>
+                        </table>
+                        <h2>About this event</h2>
+                        <table>
+                            <tr>
+                                <!-- Render text into multiline -->
+                                <td>{{ event.event_descr.replace('\n', '<br>') | safe }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="ticket-section">
+                        <h2>Tickets</h2>
+                        <!-- Display tickets -->
+                        {% for ticket in event.tickets %}
+                        <div class="ticket-container">
+                            <div class="ticket-detail">
+                                <h3>{{ ticket.ticket_type }}</h3>
+
+                                {% if ticket.price == 0.00 and ticket.member_discount == 0.00: %}
+                                    <label for="price">Free</label>
+                                {% else %}
+                                    <div class="prices">
+                                        <label for="normal-price">Normal Price: </label>
+                                        <label for="normal-price">RM {{ ticket.price }}</label>
+                                    </div>
+                                    <div class="prices">
+                                        <label for="member-price">Member Price: </label>
+                                        <label for="member-price">RM {{ ticket.member_discount }}</label>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                            
+                            <div class="quantity-select">
+                                <select id="quantity">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                </select>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <br><br><br>
+                    <button class="purchase-ticket" id="purchaseTicketButton" onclick="purchaseTicket()" disabled>Purchase Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        /* Tabbed navigation */
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.getElementById("defaultOpen").click();
+    </script>
+</main>
+{% endblock %}
