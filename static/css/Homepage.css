@@ -255,10 +255,11 @@
   display: flex;
   overflow-x: hidden; /* Hide scrollbar */
   scroll-behavior: smooth; /* Smooth scrolling */
+  flex-wrap: nowrap; 
 }
 
 .event-container {
-  flex: 0 0 auto;
+  flex: none;
   width: 300px;
   border-radius: 10px;
   overflow: hidden;
