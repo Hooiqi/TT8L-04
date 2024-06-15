@@ -97,6 +97,26 @@ def ticket_history(user_id):
     
     return render_template('ticket_history.html', user=user, user_orders=user_orders, search_query=search_query, status_filter=status_filter)
 
+@app.route('/event/details/<event_id>', methods=['GET'])
+def event_details(event_id):
+    event = Event.query.get_or_404(event_id)
+    user_id = "1221107001"  # Change to current_user later
+
+    # Check if the user has already purchased a ticket for this event
+    user_has_ticket = UserOrder.query.join(Ticket).filter(
+        UserOrder.user_id == user_id,
+        Ticket.event_id == event_id).first() is not None
+
+    # Check if the user is a member with an approved status
+    user_membership = Membership.query.filter_by(user_id=user_id, mstatus_id=2).first()  # 2 corresponds to 'Accept' in member_status
+
+    # Format event_start and event_time for display
+    event.event_start_formatted = event.event_start.strftime('%A, %B %d, %Y')
+    event.event_end_formatted = event.event_end.strftime('%A, %B %d, %Y')
+    event.event_time_formatted = event.event_time.strftime('%I:%M %p')
+
+    return render_template('EventDetails.html', event=event, user_has_ticket=user_has_ticket, user_member_status='Accept' if user_membership else 'None')
+
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
     form = EventForm()

@@ -16,7 +16,7 @@
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
-        margin: 10px 2px;
+        margin: 10px 10px;
         transition-duration: 0.4s;
         border-radius: 12px;
     }
@@ -26,6 +26,11 @@
         background-color: white;
         color: black;
         border: 2px solid #04AA6D;
+    }
+
+    /* Disable hover effect */
+    .noHover{
+        pointer-events: none;
     }
 
     .popup-form {
@@ -44,19 +49,17 @@
         background-color: white;
         z-index: 1;
         margin: 15% auto;
-        padding: 10px 30px 30px 30px;
+        padding: 10px 40px 30px 40px;
         border: 1px solid #888;
         border-radius: 10px;
-        width: 450px;
-        max-width: 100%;
+        width: 400px;
         animation: animatezoom 0.6s;
     }
 
     /* The Close Button (x) */
     .close {
         position: relative;
-        left: 430px;
-        bottom: 0px;
+        left: 400px;
         color: #000;
         font-size: 35px;
         font-weight: bold;
@@ -68,11 +71,6 @@
         cursor: pointer;
     }
 
-    .checkout-button {
-        background-color: green;
-        color: white;
-        border: none;
-    }
     @-webkit-keyframes animatezoom {
         from {-webkit-transform: scale(0)} 
         to {-webkit-transform: scale(1)}
@@ -89,7 +87,8 @@
 <div class="create-event-container">
     <form class="create-event-form">
         <h1 style="font-size: 40px; text-align: center;">{{ event.event_name }}</h1>
-
+        
+        <!-- Display poster -->
         {% if event.event_img != None: %}
         <div class="poster-container">
             <div class="poster-background-blur" style="background-image: url('{{ url_for('static', filename='images/' ~ event.event_img) }}');"></div>
@@ -97,6 +96,7 @@
         </div>
         {% endif %}
 
+        <!-- Display event details -->
         <div class="event-detail-container">
             <div class="event-section">
                 <table class="event-display">
@@ -127,6 +127,8 @@
                         <td>{{ event.event_duration }}</td>
                     </tr>
                 </table>
+
+                <!-- Display event description -->
                 <h2>About this event</h2>
                 <table>
                     <tr>
@@ -135,6 +137,7 @@
                 </table>
             </div>
             
+            <!-- Display tickets -->
             <div class="ticket-section" style="margin-bottom: 80px;">
                 <h2>Ticket</h2>
                 {% for ticket in event.tickets %}
@@ -155,7 +158,16 @@
                             </div>
                         {% endif %}
                     </div>
-                    <button class="purchase-ticket" onclick="openForm('{{ event.event_name }}', '{{ ticket.ticket_type }}', '{{ ticket.price }}')">Buy A Ticket</button>
+                    
+                    {% if user_has_ticket %}
+                        <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Event Ticket Purchased</button>
+                    {% else %}
+                        <button class="purchase-ticket" 
+                        onclick="openForm('{{ event.event_name }}', '{{ ticket.ticket_type }}', 
+                        '{{ ticket.member_discount if user_member_status == 'Accept' else ticket.price }}')">
+                            Buy A Ticket
+                        </button>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
@@ -166,16 +178,18 @@
 <div id="popupForm" class="popup-form">
     <div class="form-container">
         <span onclick="closeForm()" class="close" title="Close Modal">&times;</span>
-        <div>
-            <h2>Checkout Summary</h2>
+        <div style="position: relative;bottom: 25px">
+            <!--Display order summary-->
+            <h2>Ticket Summary</h2>
             <p>Event: <span id="current-event-name"></span></p>
             <p>Ticket: <span id="current-ticket-type"></span></p>
             <p>Price: <span id="current-ticket-price"></span></p>
-            <button class="checkout-button" value="checkout">Proceed to Checkout</button>
         </div>
+        <button class="checkout-button" value="checkout">Proceed to Checkout</button>
     </div>
 </div>
 <script>
+    // Open pop-up form
     function openForm(eventName, ticketType, ticketPrice) {
         event.preventDefault();
         document.getElementById("current-event-name").innerText = eventName;
@@ -184,6 +198,7 @@
         document.getElementById("popupForm").style.display = "block";
     }
 
+    // Close pop-up form
     function closeForm() {
         document.getElementById("popupForm").style.display = "none";
     }
