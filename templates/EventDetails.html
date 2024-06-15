@@ -33,6 +33,14 @@
         pointer-events: none;
     }
 
+    .order-summary td, .order-summary th{
+        padding: 10px;
+        text-align: left;
+    }
+    .order-summary {
+        width: 100%;
+    }
+
     .popup-form {
         display: none;
         position: fixed;
@@ -140,7 +148,7 @@
             <!-- Display tickets -->
             <div class="ticket-section" style="margin-bottom: 80px;">
                 <h2>Ticket</h2>
-                {% for ticket in event.tickets %}
+                {% for ticket, remaining_tickets in tickets_info %}
                 <div class="card2">
                     <div class="ticket-detail">
                         <h3>{{ ticket.ticket_type }}</h3>
@@ -157,10 +165,18 @@
                                 <label for="member-price">RM {{ ticket.member_discount }}</label>
                             </div>
                         {% endif %}
+                        <p style="font-size: 12px;">
+                            Sales Period: {{ ticket.start_sale.strftime('%B %d, %Y, %I:%M %p') }} - {{ ticket.end_sale.strftime('%B %d, %Y, %I:%M %p') }}
+                        </p>
                     </div>
-                    
                     {% if user_has_ticket %}
                         <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Event Ticket Purchased</button>
+                    {% elif remaining_tickets <= 0 %}
+                        <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Sold Out</button>
+                    {% elif current_datetime < ticket.start_sale %}
+                        <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Sales Haven't Started</button>
+                    {% elif current_datetime > ticket.end_sale %}
+                            <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Sales Period Over</button>
                     {% else %}
                         <button class="purchase-ticket" 
                         onclick="openForm('{{ event.event_name }}', '{{ ticket.ticket_type }}', 
@@ -180,10 +196,21 @@
         <span onclick="closeForm()" class="close" title="Close Modal">&times;</span>
         <div style="position: relative;bottom: 25px">
             <!--Display order summary-->
-            <h2>Ticket Summary</h2>
-            <p>Event: <span id="current-event-name"></span></p>
-            <p>Ticket: <span id="current-ticket-type"></span></p>
-            <p>Price: <span id="current-ticket-price"></span></p>
+            <h2>Order Summary</h2>
+            <table class="order-summary">
+                <tr>
+                    <th>Event</th> 
+                    <td><span id="current-event-name"></span></td>
+                </tr>
+                <tr>
+                    <th style="border-bottom: 1px solid #dee2e6;">Ticket</th> 
+                    <td style="border-bottom: 1px solid #dee2e6;"><span id="current-ticket-type"></span></td>
+                </tr>
+                <tr>
+                    <th>TOTAL</th> 
+                    <td><span id="current-ticket-price"></span></td>
+                </tr>
+            </table>
         </div>
         <button class="checkout-button" value="checkout">Proceed to Checkout</button>
     </div>
