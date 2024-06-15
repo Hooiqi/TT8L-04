@@ -1,5 +1,4 @@
 from flask import Flask, render_template, url_for, request, redirect, flash
-from flask_sqlalchemy import SQLAlchemy
 from forms import *
 from flask_wtf import CSRFProtect
 from flask_bcrypt import Bcrypt
@@ -100,7 +99,7 @@ def ticket_history(user_id):
 @app.route('/event/details/<event_id>', methods=['GET'])
 def event_details(event_id):
     event = Event.query.get_or_404(event_id)
-    user_id = "1221107001"  # Change to current_user later
+    user_id = "1221107111"  # Replace with current_user logic
 
     # Check if the user has already purchased a ticket for this event
     user_has_ticket = UserOrder.query.join(Ticket).filter(
@@ -115,7 +114,19 @@ def event_details(event_id):
     event.event_end_formatted = event.event_end.strftime('%A, %B %d, %Y')
     event.event_time_formatted = event.event_time.strftime('%I:%M %p')
 
-    return render_template('EventDetails.html', event=event, user_has_ticket=user_has_ticket, user_member_status='Accept' if user_membership else 'None')
+    # Get remaining tickets for each ticket type
+    tickets_info = []
+    for ticket in event.tickets:
+        sold_tickets = UserOrder.query.filter_by(ticket_id=ticket.ticket_id).count()
+        remaining_tickets = ticket.max_quantity - sold_tickets
+        tickets_info.append((ticket, remaining_tickets))
+
+    # Get current datetime
+    current_datetime = datetime.now()
+
+    return render_template('EventDetails.html', event=event, user_has_ticket=user_has_ticket, 
+                           user_member_status='Accept' if user_membership else 'None', 
+                           tickets_info=tickets_info, current_datetime=current_datetime)
 
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
