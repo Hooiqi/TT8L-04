@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
-from forms import TicketForm, EventForm, SignupForm
+from forms import *
 from flask_wtf import CSRFProtect
 from flask_bcrypt import Bcrypt
 from models import *
@@ -39,6 +39,63 @@ def signup():
         return redirect(url_for('signup'))
 
     return render_template('Signuppage.html', form=form)
+
+@app.route('/account/profile/<user_id>', methods=['GET'])
+def user_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    form = ResetPasswordForm()
+    return render_template('user_profile.html', user=user, form=form)
+
+@app.route('/account/profile/reset_password', methods=['POST'])
+def reset_password():
+    form = ResetPasswordForm()
+    user_id = request.args.get('user_id')  # Extract user_id from request arguments
+    print(f"Received request to reset password for user_id: {user_id}")
+    
+    if form.validate_on_submit():
+        print("Form validated successfully.")
+        user = User.query.get_or_404(user_id)
+        
+        if bcrypt.check_password_hash(user.user_pwd, form.old_pwd.data):
+            print("Old password matched.")
+            new_hashed_password = bcrypt.generate_password_hash(form.new_pwd.data).decode('utf-8')
+            user.user_pwd = new_hashed_password
+            db.session.commit()
+            flash('Your password has been reset!', 'success')
+        else:
+            print("Old password did not match.")
+            flash('Old password is incorrect', 'danger')
+    else:
+        print("Form validation failed.")
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"Error in {getattr(form, field).label.text}: {error}", 'danger')
+
+    return redirect(url_for('user_profile', user_id=user_id))
+
+@app.route('/account/tickethistory/<user_id>', methods=['GET'])
+def ticket_history(user_id):
+    # Retrieve search query and status filter from URL query parameters
+    search_query = request.args.get('search', '').strip()
+    status_filter = request.args.get('status', '').strip()
+    
+    user = User.query.get_or_404(user_id)
+    user_orders = db.session.query(UserOrder, Ticket, Event)\
+        .join(Ticket, UserOrder.ticket_id == Ticket.ticket_id)\
+        .join(Event, Ticket.event_id == Event.event_id)\
+        .filter(UserOrder.user_id == user_id)
+    
+    #Search ticket history by event name
+    if search_query:
+        user_orders = user_orders.filter(Event.event_name.ilike(f'%{search_query}%'))
+    
+    #Filter ticket history by order status
+    if status_filter:
+        user_orders = user_orders.filter(UserOrder.order_status.has(ostatus_name=status_filter))
+    
+    user_orders = user_orders.all()
+    
+    return render_template('ticket_history.html', user=user, user_orders=user_orders, search_query=search_query, status_filter=status_filter)
 
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
@@ -95,13 +152,13 @@ def create_event():
             for field, errors in form.errors.items():
                 if field != 'tickets':
                     for error in errors:
-                        flash(f"{getattr(form, field).label.text} - {error}", 'error')
+                        flash(f"Invalid data in '{getattr(form, field).label.text}' field! {error}", 'error')
 
             # Flash errors for tickets
             for i, ticket_form in enumerate(form.tickets):
                 for field, errors in ticket_form.errors.items():
                     for error in errors:
-                        flash(f"Ticket '{ticket_form.ticket_type.data}': {getattr(ticket_form, field).label.text} - {error}", 'error')
+                        flash(f"Invalid data in ticket '{ticket_form.ticket_type.data}': {getattr(ticket_form, field).label.text} - {error}", 'error')
 
             flash('Failed to save event!' if action == 'save' else 'Failed to publish event!', 'error')
 
@@ -181,13 +238,13 @@ def edit_event(event_id):
                 for field, errors in form.errors.items():
                     if field != 'tickets':
                         for error in errors:
-                            flash(f"{getattr(form, field).label.text} - {error}", 'danger')
+                            flash(f"Invalid data in '{getattr(form, field).label.text}' field! {error}", 'danger')
 
                 # Flash errors for tickets
                 for i, ticket_form in enumerate(form.tickets):
                     for field, errors in ticket_form.errors.items():
                         for error in errors:
-                            flash(f"Ticket '{ticket_form.ticket_type.data}': {getattr(ticket_form, field).label.text} - {error}", 'danger')
+                            flash(f"Invalid data in ticket '{ticket_form.ticket_type.data}': {getattr(ticket_form, field).label.text} - {error}", 'danger')
                             
                 flash('Failed to save event!' if action == 'update' else 'Failed to publish event!', 'danger')
 
