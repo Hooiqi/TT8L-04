@@ -1,125 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Details</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <nav>
-        <div class="topnavbar">
-            <div class="left">
-                <div class="logo">
-                    <p><span>MMU</span>Event</p>
-                </div>
-                <div class="searchbar">
-                    <input type="text" placeholder="Search">
-                </div>
-                <div class="filter">
-                    <button class="filter"><i class="fa-solid fa-filter "></i></button>
-                </div>
-                
-                <div class="right">
-                    <ul>
-                        <li><a href="#">Profile</a></li>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Organisers</a></li>
-                        <div class="dropdown">
-                            <button class="dropbtn">Event <i class="fa fa-caret-down"></i></button>
-                            <div class="dropdown-content">
-                                <a href="#">All</a>
-                                <a href="#">Sports</a>
-                                <a href="#">Academic</a>
-                                <a href="#">Entertainment</a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <div class="create-event-container">
-        <form class="create-event-form">
-            <h1 style="font-size: 40px">Event Name</h1>
+{% extends 'base.html' %}
 
-            <div class="poster-container">
-                <div class="poster-background-blur" style="background-image: url('poster.jpg');"></div>
-                <img src="poster.jpg" alt="Event Image" class="poster-foreground-image">
+{% block title %}{{ event.event_name }} | Event{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+    /* Button used to open the contact form */
+    .purchase-ticket {
+        background-color: #04AA6D;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 10px 2px;
+        transition-duration: 0.4s;
+        border-radius: 12px;
+    }
+    
+    /* Add some hover effects to buttons */
+    .purchase-ticket:hover {
+        background-color: white;
+        color: black;
+        border: 2px solid #04AA6D;
+    }
+
+    .popup-form {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .form-container {
+        background-color: white;
+        z-index: 1;
+        margin: 15% auto;
+        padding: 10px 30px 30px 30px;
+        border: 1px solid #888;
+        border-radius: 10px;
+        width: 450px;
+        max-width: 100%;
+        animation: animatezoom 0.6s;
+    }
+
+    /* The Close Button (x) */
+    .close {
+        position: relative;
+        left: 430px;
+        bottom: 0px;
+        color: #000;
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: red;
+        cursor: pointer;
+    }
+
+    .checkout-button {
+        background-color: green;
+        color: white;
+        border: none;
+    }
+    @-webkit-keyframes animatezoom {
+        from {-webkit-transform: scale(0)} 
+        to {-webkit-transform: scale(1)}
+    }
+            
+    @keyframes animatezoom {
+        from {transform: scale(0)} 
+        to {transform: scale(1)}
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-event-container">
+    <form class="create-event-form">
+        <h1 style="font-size: 40px; text-align: center;">{{ event.event_name }}</h1>
+
+        {% if event.event_img != None: %}
+        <div class="poster-container">
+            <div class="poster-background-blur" style="background-image: url('{{ url_for('static', filename='images/' ~ event.event_img) }}');"></div>
+            <img src="{{ url_for('static', filename='images/' ~ event.event_img) }}" alt="Event Poster" class="poster-foreground-image">
+        </div>
+        {% endif %}
+
+        <div class="event-detail-container">
+            <div class="event-section">
+                <table class="event-display">
+                    <tr>
+                        <th>Organiser</th>
+                        <td>{{ event.admin.admin_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Location/Platform</th>
+                        <td>{{ event.location_details }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td>
+                            {% if event.event_start == event.event_end %}
+                                {{ event.event_start_formatted }}
+                            {% else %}
+                                {{ event.event_start_formatted }} - {{ event.event_end_formatted }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Start Time</th>
+                        <td>{{ event.event_time_formatted }}</td>
+                    </tr>
+                    <tr>
+                        <th>Duration</th>
+                        <td>{{ event.event_duration }}</td>
+                    </tr>
+                </table>
+                <h2>About this event</h2>
+                <table>
+                    <tr>
+                        <td style="text-align: justify;">{{ event.event_descr.replace('\n', '<br>') | safe }}</td>
+                    </tr>
+                </table>
             </div>
             
-            <div class="event-detail-container">
-                <div class="event-section">
-                    <table class="event-display">
-                        <tr>
-                            <th>Organiser</th>
-                            <td id="display_organiser"></td>
-                        </tr>
-                        <tr>
-                            <th>Location</th>
-                            <td id="display_location"></td>
-                        </tr>
-                        <tr>
-                            <th>Date</th>
-                            <td id="display_event_date"></td>
-                        </tr>
-                        <tr>
-                            <th>Start Time</th>
-                            <td id="display_event_time"></td>
-                        </tr>
-                        <tr>
-                            <th>Duration</th>
-                            <td id="display_duration"></td>
-                        </tr>
-                    </table>
-                    <h2>About this event</h2>
-                    <label for="">dssfhewiufhodishvkl </label>
-                    <!-- display event details -->
+            <div class="ticket-section" style="margin-bottom: 80px;">
+                <h2>Ticket</h2>
+                {% for ticket in event.tickets %}
+                <div class="card2">
+                    <div class="ticket-detail">
+                        <h3>{{ ticket.ticket_type }}</h3>
 
-                </div>
-
-                <br><br>
-                <div class="ticket-section">
-                    <h2>Tickets</h2>
-                    
-                    <div class="date-select">
-                        <label for="event-date" class="select-label">Select Date:</label>
-                        <select id="event-date">
-                            <option value=""></option>
-                            <option value=""></option>
-                            <option value=""></option>
-                        </select>
-                    </div>
-                    <br>
-
-                    <div class="ticket-container">
-                        <div class="ticket-detail">
-                            <h3>General Admission</h3>
+                        {% if ticket.price == 0.00 and ticket.member_discount == 0.00 %}
+                            <label for="price">Free</label>
+                        {% else %}
                             <div class="prices">
                                 <label for="normal-price">Normal Price: </label>
-                                <label for="normal-price">RM</label>
+                                <label for="normal-price">RM {{ ticket.price }}</label>
                             </div>
                             <div class="prices">
                                 <label for="member-price">Member Price: </label>
-                                <label for="member-price">RM</label>
+                                <label for="member-price">RM {{ ticket.member_discount }}</label>
                             </div>
-                        </div>
-                        <div class="quantity-select">
-                                <select id="quantity">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                </select>
-                        </div>
+                        {% endif %}
                     </div>
+                    <button class="purchase-ticket" onclick="openForm('{{ event.event_name }}', '{{ ticket.ticket_type }}', '{{ ticket.price }}')">Buy A Ticket</button>
                 </div>
-                <br><br><br>
-                <button class="purchase-ticket" id="purchaseTicketButton" onclick="purchaseTicket()">Purchase Ticket</button>
+                {% endfor %}
             </div>
-            
-        </form>
+        </div>
+    </form>
+</div>
+
+<div id="popupForm" class="popup-form">
+    <div class="form-container">
+        <span onclick="closeForm()" class="close" title="Close Modal">&times;</span>
+        <div>
+            <h2>Checkout Summary</h2>
+            <p>Event: <span id="current-event-name"></span></p>
+            <p>Ticket: <span id="current-ticket-type"></span></p>
+            <p>Price: <span id="current-ticket-price"></span></p>
+            <button class="checkout-button" value="checkout">Proceed to Checkout</button>
+        </div>
     </div>
-</body>
-</html>
+</div>
+<script>
+    function openForm(eventName, ticketType, ticketPrice) {
+        event.preventDefault();
+        document.getElementById("current-event-name").innerText = eventName;
+        document.getElementById("current-ticket-type").innerText = ticketType;
+        document.getElementById("current-ticket-price").innerText = "RM " + ticketPrice;
+        document.getElementById("popupForm").style.display = "block";
+    }
+
+    function closeForm() {
+        document.getElementById("popupForm").style.display = "none";
+    }
+</script>
+{% endblock %}
