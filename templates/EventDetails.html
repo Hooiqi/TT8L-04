@@ -4,6 +4,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
 <style>
     /* Button used to open the contact form */
     .purchase-ticket {
@@ -44,7 +45,7 @@
     .popup-form {
         display: none;
         position: fixed;
-        z-index: 1;
+        z-index: 5;
         left: 0;
         top: 0;
         width: 100%;
@@ -53,9 +54,9 @@
         background-color: rgba(0, 0, 0, 0.5);
     }
 
-    .form-container {
+    .popup-form-container {
         background-color: white;
-        z-index: 1;
+        z-index: 5;
         margin: 15% auto;
         padding: 10px 40px 30px 40px;
         border: 1px solid #888;
@@ -93,7 +94,7 @@
 
 {% block content %}
 <div class="create-event-container">
-    <form class="create-event-form">
+    <div class="create-event-form">
         <h1 style="font-size: 40px; text-align: center;">{{ event.event_name }}</h1>
         
         <!-- Display poster -->
@@ -147,9 +148,10 @@
             
             <!-- Display tickets -->
             <div class="ticket-section" style="margin-bottom: 80px;">
+            {% if tickets_info %}
                 <h2>Ticket</h2>
                 {% for ticket, remaining_tickets in tickets_info %}
-                <div class="card2">
+                <div class="card">
                     <div class="ticket-detail">
                         <h3>{{ ticket.ticket_type }}</h3>
 
@@ -169,6 +171,8 @@
                             Sales Period: {{ ticket.start_sale.strftime('%B %d, %Y, %I:%M %p') }} - {{ ticket.end_sale.strftime('%B %d, %Y, %I:%M %p') }}
                         </p>
                     </div>
+
+                    <!-- Display button style based on different condition -->
                     {% if user_has_ticket %}
                         <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Event Ticket Purchased</button>
                     {% elif remaining_tickets <= 0 %}
@@ -186,13 +190,14 @@
                     {% endif %}
                 </div>
                 {% endfor %}
+            {% endif %}
             </div>
         </div>
-    </form>
+    </div>
 </div>
 
 <div id="popupForm" class="popup-form">
-    <div class="form-container">
+    <div class="popup-form-container">
         <span onclick="closeForm()" class="close" title="Close Modal">&times;</span>
         <div style="position: relative;bottom: 25px">
             <!--Display order summary-->
