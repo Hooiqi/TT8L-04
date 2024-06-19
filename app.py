@@ -111,6 +111,35 @@ def ticket_history(user_id):
     return render_template('ticket_history.html', user=user, user_orders=user_orders, search_query=search_query, status_filter=status_filter,
                            categories_nav=categories_nav)
 
+@app.route('/account/membership/<user_id>', methods=['GET'])
+@login_required
+def user_membership(user_id):
+    user_id = current_user.user_id
+
+    # Retrieve search query and status filter from URL query parameters
+    search_query = request.args.get('search', '').strip()
+    status_filter = request.args.get('status', '').strip()
+    
+    categories_nav = EventCategory.query.all() # Event category in navigation bar
+
+    user = User.query.get_or_404(user_id)
+    memberships = db.session.query(Admin, Membership)\
+        .join(Membership, Admin.admin_id == Membership.admin_id)\
+        .filter(Membership.user_id == user_id)
+    
+    # Search membership history by admin event name
+    if search_query:
+        memberships = memberships.filter(Admin.admin_name.ilike(f'%{search_query}%'))
+    
+    # Filter membership history by member status
+    if status_filter:
+        memberships = memberships.filter(Membership.member_status.has(mstatus_name=status_filter))
+    
+    memberships = memberships.all()
+    
+    return render_template('user_membership.html', user=user, memberships=memberships, search_query=search_query, status_filter=status_filter,
+                           categories_nav=categories_nav)
+
 @app.route('/events', defaults={'category': None})
 @app.route('/events/<category>')
 @login_required
