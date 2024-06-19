@@ -2,9 +2,11 @@ from flask import Flask, render_template, url_for, request, redirect, flash
 from forms import *
 from flask_wtf import CSRFProtect
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from models import *
 from werkzeug.utils import secure_filename
 import os
+import stripe
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://root:tt8l_04@localhost/event_management_system'
@@ -35,18 +37,25 @@ def signup():
         db.session.commit()
 
         flash('User created successfully!', 'success')
-        return redirect(url_for('signup'))
+        return redirect(url_for('login'))
 
     return render_template('Signuppage.html', form=form)
 
 @app.route('/account/profile/<user_id>', methods=['GET'])
+@login_required
 def user_profile(user_id):
+    user_id = current_user.user_id
+    
     user = User.query.get_or_404(user_id)
     form = ResetPasswordForm()
-    return render_template('user_profile.html', user=user, form=form)
+    categories_nav = EventCategory.query.all() # Event category in navigation bar
+    return render_template('user_profile.html', user=user, form=form, categories_nav=categories_nav)
 
 @app.route('/account/profile/reset_password', methods=['POST'])
+@login_required
 def reset_password():
+    user_id = current_user.user_id
+    
     form = ResetPasswordForm()
     user_id = request.args.get('user_id')  # Extract user_id from request arguments
     print(f"Received request to reset password for user_id: {user_id}")
@@ -73,11 +82,16 @@ def reset_password():
     return redirect(url_for('user_profile', user_id=user_id))
 
 @app.route('/account/tickethistory/<user_id>', methods=['GET'])
+@login_required
 def ticket_history(user_id):
+    user_id = current_user.user_id
+
     # Retrieve search query and status filter from URL query parameters
     search_query = request.args.get('search', '').strip()
     status_filter = request.args.get('status', '').strip()
     
+    categories_nav = EventCategory.query.all() # Event category in navigation bar
+
     user = User.query.get_or_404(user_id)
     user_orders = db.session.query(UserOrder, Ticket, Event)\
         .join(Ticket, UserOrder.ticket_id == Ticket.ticket_id)\
@@ -94,12 +108,71 @@ def ticket_history(user_id):
     
     user_orders = user_orders.all()
     
-    return render_template('ticket_history.html', user=user, user_orders=user_orders, search_query=search_query, status_filter=status_filter)
+    return render_template('ticket_history.html', user=user, user_orders=user_orders, search_query=search_query, status_filter=status_filter,
+                           categories_nav=categories_nav)
 
-@app.route('/event/details/<event_id>', methods=['GET'])
+@app.route('/events', defaults={'category': None})
+@app.route('/events/<category>')
+@login_required
+def event_category(category):
+    # Retrieve search query and venue filter from URL query parameters
+    search_query = request.args.get('search', '').strip()
+    venue_filter = request.args.get('venue_type', '').strip()
+    sort = request.args.get('sort', '').strip()
+    include_expired = request.args.get('expired', 'off') == 'on'
+    page = request.args.get('page', 1, type=int)  # Get the current page number
+
+    # Get current datetime
+    current_datetime = datetime.now()
+
+    # Navigation bar
+    categories_nav = EventCategory.query.all()
+
+    # Initialize the event query
+    if category:
+        category_obj = EventCategory.query.filter_by(category=category).first_or_404()
+        event_query = Event.query.filter_by(category_id=category_obj.category_id, publish_status="Published")
+    else:
+        category_obj = None
+        event_query = Event.query.filter_by(publish_status="Published")
+
+    # Apply search filter if search query is provided
+    if search_query:
+        event_query = event_query.filter(Event.event_name.ilike(f'%{search_query}%'))
+
+    # Apply venue filter if venue type is provided
+    if venue_filter:
+        event_query = event_query.filter(Event.event_venue.has(location=venue_filter))
+
+    # Apply filter to exclude expired events if include_expired is not selected
+    if not include_expired:
+        event_query = event_query.filter(Event.event_end >= current_datetime)
+
+    # Apply sorting
+    if sort == 'date':
+        event_query = event_query.order_by(Event.event_start.asc())
+    elif sort == 'a-z':
+        event_query = event_query.order_by(Event.event_name.asc())
+    elif sort == 'z-a':
+        event_query = event_query.order_by(Event.event_name.desc())
+
+    # Paginate the results
+    events_pagination = event_query.paginate(page=page, per_page=9)
+    events = events_pagination.items
+
+    return render_template('event-category.html', category=category_obj, event=events, categories_nav=categories_nav,
+                            current_datetime=current_datetime, search_query=search_query, venue_filter=venue_filter, 
+                            sort=sort, pagination=events_pagination, include_expired=include_expired)
+
+@app.route('/events/details/<event_id>', methods=['GET'])
+@login_required
 def event_details(event_id):
+    categories_nav = EventCategory.query.all()
     event = Event.query.get_or_404(event_id)
-    user_id = "1221107111"  # Replace with current_user logic
+    user_id = current_user.user_id
+
+    # Get the admin for the event
+    admin = Admin.query.get(event.admin_id)
 
     # Check if the user has already purchased a ticket for this event
     user_has_ticket = UserOrder.query.join(Ticket).filter(
@@ -107,7 +180,7 @@ def event_details(event_id):
         Ticket.event_id == event_id).first() is not None
 
     # Check if the user is a member with an approved status
-    user_membership = Membership.query.filter_by(user_id=user_id, mstatus_id=2).first()  # 2 corresponds to 'Accept' in member_status
+    user_membership = Membership.query.filter_by(user_id=user_id, admin_id=event.admin_id, mstatus_id=2).first()  # 2 represents 'Accept' in member_status
 
     # Format event_start and event_time for display
     event.event_start_formatted = event.event_start.strftime('%A, %B %d, %Y')
@@ -126,7 +199,8 @@ def event_details(event_id):
 
     return render_template('EventDetails.html', event=event, user_has_ticket=user_has_ticket, 
                            user_member_status='Accept' if user_membership else 'None', 
-                           tickets_info=tickets_info, current_datetime=current_datetime)
+                           tickets_info=tickets_info, current_datetime=current_datetime, categories_nav=categories_nav,
+                           stripe_public_key=admin.stripe_public_key)
 
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
