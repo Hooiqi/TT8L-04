@@ -1,0 +1,163 @@
+{% extends 'base_user.html' %}
+
+{% block title %}{{ organiser.admin_name }} | Organiser{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
+<style>
+    .all-events-container {
+        width: 80%;
+        max-width: 1100px;
+        margin: 50px auto;
+    }
+
+    .event-category-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* Three columns */
+        gap: 40px; /* Space between grid items */
+        padding: 20px;
+    }
+    .event-cat-container {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.5s ease;
+    }
+
+    .event-details {
+        background-color: #f9f9f9;
+        border-radius: 0 0 10px 10px;
+        padding: 20px;
+    }
+    .event-details p{
+        margin: 0 5px 10px 5px;
+    }
+
+    .event-img {
+        border-radius: 10px 10px 0 0;
+        overflow: hidden;
+    }
+
+    .event-cover {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    /* For expired event */
+    .expired-event .event-cover {
+        filter: grayscale(100%);
+    }
+
+    /* Adjustments for responsive design */
+    @media (max-width: 768px) {
+        .event-category-container {
+            grid-template-columns: repeat(2, 1fr); /* Two columns on medium screens */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .event-category-container {
+            grid-template-columns: 1fr; /* One column on small screens */
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Include the flash messages template -->
+{% include 'flash_messages.html' %}
+
+<div class="organiser-container">
+    <div class="organiser-content">
+        <!-- Display profile image -->
+        <div class="organiser-header">
+            <div class="organizer-picture">
+                <img src="{{ url_for('static', filename='images/' ~ organiser.admin_img) }}" alt="Organiser">
+            </div>
+        </div>
+
+        <!-- Display info -->
+        <div class="organiser-info">
+            <table class="event-display">
+                <tr>
+                    <th>Name</th>
+                    <td>{{ organiser.admin_name }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ organiser.admin_email }}</td>
+                </tr>
+                <tr>
+                    <th>Phone number</th>
+                    <td>{{ organiser.admin_phone }}</td>
+                </tr>
+            </table>
+            <div>
+                <!-- Display event description -->
+                <h2>Description</h2>
+                <table>
+                    <tr>
+                        <td style="text-align: justify;">{{ organiser.admin_descr.replace('\n', '<br>') | safe }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            {% if organiser.approved_membership %}
+            <form action="{{ url_for('details_manage_membership', admin_id=organiser.admin_id, action='unjoin') }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-danger" name="action" value="unjoin"
+                    onclick="return confirm('Are you sure you want to unjoin?');">Unjoin</button>
+            </form>
+            {% elif organiser.requested %}
+                <form action="{{ url_for('details_manage_membership', admin_id=organiser.admin_id, action='cancel') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-warning" name="action" value="cancel">Cancel request</button>
+                </form>
+            {% else %}
+                <form action="{{ url_for('details_manage_membership', admin_id=organiser.admin_id, action='request') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-primary" name="action" value="request"
+                        onclick="return confirm('Are you sure you want to request to join as member?');">Request to Join</button>
+                </form>
+            {% endif %}
+        
+        
+        </div>
+    </div>
+</div>
+
+
+<!-- Upcoming Events Section -->
+<div class="all-events-container">
+    <h2 style="margin-top: 40px; margin-left: 40px;">Events</h2>
+    {% if events %}
+        <div class="event-category-container">
+            {% for event in events %}
+                <!-- Adding grayscale to expired event -->
+                <div class="event-cat-container {% if event.event_end < current_datetime %}expired-event{% endif %}">
+                    <div class="event-img parallax">
+                        <img src="{{ url_for('static', filename='images/' ~ (event.event_img or 'default_poster.png')) }}" 
+                            alt="{{ event.event_name }}" class="event-cover">
+                    </div>
+                    <div class="event-details">
+                        <h3>{{ event.event_name }}</h3>
+                        <a href><p>{{ event.admin.admin_name }}</p></a>
+                        {% if event.event_end < current_datetime %}
+                        <p>Expired</p>
+                        {% else %}
+                        <p>{{ event.event_start.strftime('%B %d, %Y') }}, {{ event.event_time.strftime('%I:%M %p') }}</p>
+                        {% endif %}
+                        <a href="{{ url_for('event_details', event_id=event.event_id) }}">
+                            <button class="view-details-btn">View Details</button>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align: center;">No published events.</p>
+    {% endif %}
+</div>
+{% endblock %}

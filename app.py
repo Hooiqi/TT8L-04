@@ -289,6 +289,63 @@ def manage_membership(admin_id, action):
 
     return redirect(url_for('organisers'))
 
+@app.route('/organisers/details/<admin_id>', methods=['GET'])
+@login_required
+def organiser_details(admin_id):
+    categories_nav = EventCategory.query.all()
+    admin = Admin.query.get_or_404(admin_id)
+    user_id = current_user.user_id
+
+    # Check membership requests and status
+    memberships = Membership.query.filter_by(user_id=user_id).all()
+    membership_status = {membership.admin_id: membership.mstatus_id for membership in memberships}
+
+    admin.requested = membership_status.get(admin.admin_id) == 1  # Check 'Pending'
+    admin.approved_membership = membership_status.get(admin.admin_id) == 2  # Check 'Accept'
+
+    # Get current datetime
+    current_datetime = datetime.now()
+
+    # Fetch events
+    all_events = Event.query.filter_by(admin_id=admin_id, publish_status="Published").order_by(Event.event_start.desc()).all()
+
+    return render_template('organiser_details.html', organiser=admin, categories_nav=categories_nav, events=all_events, current_datetime=current_datetime, user=current_user)
+
+@app.route('/organisers/details/<admin_id>/<action>', methods=['POST'])
+@login_required
+def details_manage_membership(admin_id, action):
+    user_id = current_user.user_id
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+
+        if action == 'request':
+            existing_membership = Membership.query.filter_by(user_id=user_id, admin_id=admin_id, mstatus_id=1).first()
+            if not existing_membership:
+                new_membership = Membership(
+                    user_id=user_id,
+                    admin_id=admin_id,
+                    mstatus_id=1  # 1 represents Pending
+                )
+                db.session.add(new_membership)
+                db.session.commit()
+                flash('Membership request submitted!', 'success')
+
+        elif action == 'unjoin':
+            membership = Membership.query.filter_by(user_id=user_id, admin_id=admin_id, mstatus_id=2).first()
+            if membership:
+                db.session.delete(membership)
+                db.session.commit()
+                flash('Successfully unjoined membership.', 'success')
+        elif action == 'cancel':
+            membership = Membership.query.filter_by(user_id=user_id, admin_id=admin_id, mstatus_id=1).first()
+            if membership:
+                db.session.delete(membership)
+                db.session.commit()
+                flash('Membership request cancelled.', 'success')
+
+    return redirect(url_for('organiser_details', admin_id=admin_id))
+
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
     form = EventForm()
