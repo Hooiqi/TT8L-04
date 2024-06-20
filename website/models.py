@@ -18,12 +18,6 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return self.user_id
 
-class OrderStatus(db.Model):
-    __tablename__ = 'order_status'
-    ostatus_id = db.Column(db.Integer, primary_key=True)
-    ostatus_name = db.Column(db.String(10), nullable=False)
-
-    orders = db.relationship('UserOrder', backref='order_status', lazy=True)
 
 class UserOrder(db.Model):
     __tablename__ = 'user_order'
@@ -32,7 +26,6 @@ class UserOrder(db.Model):
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.ticket_id'), nullable=False)
     order_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     order_quantity = db.Column(db.Integer, nullable=False)
-    ostatus_id = db.Column(db.Integer, db.ForeignKey('order_status.ostatus_id'), nullable=False)
     invoice = db.Column(db.String(20), nullable=False)
 
     ticket = db.relationship('Ticket', back_populates='user_orders')
@@ -60,7 +53,6 @@ class Admin(db.Model, UserMixin):
     admin_phone = db.Column(db.String(11), nullable=False)
     admin_pwd = db.Column(db.String(100), nullable=False)
     admin_descr = db.Column(db.Text)
-    stripeacc_id = db.Column(db.String(255), nullable=False)
     admin_img = db.Column(db.LargeBinary, nullable=False)
 
     events = db.relationship('Event', backref='admin', lazy=True)
@@ -111,9 +103,3 @@ class EventCategory(db.Model):
     __tablename__ = 'event_category'
     category_id = db.Column(db.String(3), primary_key=True)
     category = db.Column(db.String(30), nullable=False)
-
-class EventLikes(db.Model):
-    __tablename__ = 'event_likes'
-    like_id = db.Column(db.String(3), primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.event_id'))
-    user_id = db.Column(db.String(10), db.ForeignKey('user.user_id'), nullable=False)
