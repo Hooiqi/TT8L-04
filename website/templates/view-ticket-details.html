@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Ticket Details</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <!-- Add any additional stylesheets -->
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">Ticket Details</h1>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Buyer ID (User ID)</th>
+            <th scope="col">Ticket Type</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">Invoice ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in user_orders %}
+          <tr>
+            <td>{{ order.user.user_id }}</td>
+            <td>{{ order.ticket.ticket_type }}</td>
+            <td>{{ order.order_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ order.invoice }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
