@@ -101,3 +101,5 @@ class EventCategory(db.Model):
     __tablename__ = 'event_category'
     category_id = db.Column(db.String(3), primary_key=True)
     category = db.Column(db.String(30), nullable=False)
+
+    

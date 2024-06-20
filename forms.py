@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField, TimeField, DateTimeField, SelectField, PasswordField, FieldList, FormField, DecimalField, IntegerField, SubmitField
+from wtforms import StringField, TextAreaField, DateField, TimeField, DateTimeField, DateTimeLocalField, SelectField, PasswordField, FieldList, FormField, DecimalField, IntegerField, SubmitField
 from wtforms.validators import DataRequired, ValidationError, Optional, EqualTo, Length, NumberRange, InputRequired
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from flask import flash
 from models import User
 
 class SignupForm(FlaskForm):
@@ -23,14 +22,19 @@ class SignupForm(FlaskForm):
         # Check if the email matches the required format
         if user_email.data != f"{self.user_id.data}@student.mmu.edu.my":
             raise ValidationError('Email must be in the format: student_id@student.mmu.edu.my')
+
+class ResetPasswordForm(FlaskForm):
+    old_pwd = PasswordField('Old Password', validators=[DataRequired()], render_kw={"placeholder": "Enter Old Password"})
+    new_pwd = PasswordField('New Password', validators=[DataRequired(), Length(min=8, message="Password must have at least 8 characters")], render_kw={"placeholder": "Enter New Password"})
+    confirm_new_pwd = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_pwd', message='Passwords must match.')], render_kw={"placeholder": "Confirm New Password"})
         
 class TicketForm(FlaskForm):
     ticket_type = StringField('Ticket Type', validators=[DataRequired()], render_kw={"placeholder": "Ticket type*"})
     price = DecimalField('Normal Price', validators=[InputRequired(), NumberRange(min=0)], render_kw={"placeholder": "Normal price*"})
     member_discount = DecimalField('Member Price', validators=[InputRequired(), NumberRange(min=0)], render_kw={"placeholder": "Member price*"})
     max_quantity = IntegerField('Quantity', validators=[DataRequired()], render_kw={"placeholder": "Quantity*"})
-    start_sale = DateField('Start Sale', validators=[DataRequired()])
-    end_sale = DateField('End Sale', validators=[DataRequired()])
+    start_sale = DateTimeLocalField('Start Sale', validators=[DataRequired()], format="%Y-%m-%dT%H:%M")
+    end_sale = DateTimeLocalField('End Sale', validators=[DataRequired()], format="%Y-%m-%dT%H:%M")
 
     def validate_end_sale(self, filed):
         if filed.data <= self.start_sale.data:
@@ -42,7 +46,7 @@ class EventForm(FlaskForm):
     event_start = DateField('Start Date', validators=[DataRequired()])
     event_end = DateField('End Date', validators=[DataRequired()])
     event_time = TimeField('Start Time', validators=[DataRequired()])
-    duration = StringField('Duration', validators=[DataRequired()], render_kw={"placeholder": "hour / minute *"})
+    duration = StringField('Duration', validators=[DataRequired()], render_kw={"placeholder": "days / hours / minutes *"})
     event_img = FileField('Poster', validators=[FileAllowed(['jpg','jpeg','png'], 'Image format only accepts jpeg, jpg or png')])
     event_descr = TextAreaField('Description', validators=[DataRequired()], render_kw={"placeholder": "Event details*"})
     event_venue = SelectField('Location type', choices=[('V01', 'On campus'), ('V02', 'Off campus'), ('V03', 'Online')], validators=[DataRequired()])
@@ -52,5 +56,5 @@ class EventForm(FlaskForm):
 
     def validate_event_end(self, filed):
         if filed.data < self.event_start.data:
-            raise ValidationError('Event end date should be later than or the same as start date')
+            raise ValidationError('Event end date should not be earlier than start date')
         

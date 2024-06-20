@@ -5,12 +5,15 @@
   justify-content: space-between;
   align-items: center;
   height: 80px;
-  width: 101%; 
   z-index: 1000;
   margin-top: -8px;
   margin-left: -8px;
+  margin-right: -8px;
   position: sticky; 
   top: 0;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
   }
   
   .dropdown {
@@ -108,97 +111,36 @@
     border-radius: 8px;
   }
 
-  .searchbar {
-    margin-left: 12px;
-    display: flex;
-    align-items: center;
-  }
-
-  .searchbar input[type="text"]{
-    border: 1px solid #666666;
-    padding: 8px; 
-    outline: none;
-    transition: all 0.5s linear;
-  }
-
-.filter {
-  padding-left: 5px;
-}
-
-
 
 /* Slideshow container */
 .slideshow-container {
-  max-width: 1000px;
   position: relative;
-  margin: auto;
+  margin: 0 auto;
+  height: 500px;
+  width: 800px;
+  min-height: 500px;
+  min-width: 800px;
+  overflow: hidden;
+  padding-top: 20px;
 }
 
-/* Hide the images by default */
 .mySlides {
-  display: none;
-}
-
-/* Next & previous buttons */
-.prev, .next {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  transition: 0.6s ease;
-  border-radius: 0 3px 3px 0;
-  user-select: none;
-}
-
-/* Position the "next button" to the right */
-.next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
-}
-
-/* On hover, add a black background color with a little bit see-through */
-.prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
-}
-
-/* Caption text */
-.text {
-  color: #f2f2f2;
-  font-size: 15px;
-  padding: 8px 12px;
-  position: absolute;
-  bottom: 8px;
+  display: none; 
   width: 100%;
-  text-align: center;
+  height: 100%;
+  overflow: hidden; /* Hide overflow to prevent cropping */
+  position: relative;
 }
 
-/* Number text (1/3 etc) */
-.numbertext {
-  color: #f2f2f2;
-  font-size: 12px;
-  padding: 8px 12px;
-  position: absolute;
-  top: 0;
-}
-
-/* The dots/bullets/indicators */
-.dot {
-  cursor: pointer;
-  height: 15px;
-  width: 15px;
-  margin: 0 2px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-  transition: background-color 0.6s ease;
-}
-
-.active, .dot:hover {
-  background-color: #717171;
+.mySlides img { 
+  display: block; 
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  height: auto; /* Maintain aspect ratio of images */
+  object-fit: contain; /* Scale images to cover the entire slide */
+  border-radius: 8px; /* Add rounded corners to the slide */
 }
 
 /* Fading animation */
@@ -213,99 +155,90 @@
 }
 
 .event-slider-container {
-  position: relative;
-  overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 80px;
-  margin-bottom: 50px;
-}
-
-.event-slider-container-new {
-  position: relative;
-  overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 80px;
-  margin-bottom: 50px;
-}
-
-.event-slider-container h2 {
-  font:  bold 1.2em "Fira Sans", sans-serif;
-  font-size: 30px;
-  letter-spacing: -0.2px;
-  word-spacing: -1px;
-  font-weight: 400;
-  text-transform: capitalize;
-  margin-left: 15px;
-}
-
-
-.event-slider-container-new h2 {
-  font:  bold 1.2em "Fira Sans", sans-serif;
-  font-size: 30px;
-  letter-spacing: -0.2px;
-  word-spacing: -1px;
-  font-weight: 400;
-  text-transform: capitalize;
-  margin-left: 15px;
-}
-
-.event-slider {
   display: flex;
-  overflow-x: hidden; /* Hide scrollbar */
-  scroll-behavior: smooth; /* Smooth scrolling */
-  flex-wrap: nowrap; 
-}
-
-.event-container {
-  flex: none;
-  width: 300px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  overflow-x: auto;
+  white-space: nowrap;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+  margin-bottom: 50px;
+  }
+  
+  .event-slider-container h2 {
+  font: bold 1.2em "Fira Sans", sans-serif;
+  font-size: 30px;
+  letter-spacing: -0.2px;
+  word-spacing: -1px;
+  font-weight: 400;
+  text-transform: capitalize;
+  margin-left: 15px;
+  }
+  
+  .event-slider {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  overflow-x: auto;
+  width: 100%;
+  }
+  
+  .event-container {
+  flex: 0 0 auto;
+  width: 400px;
+  height: 400px;
+  max-height: 400px;
   border-radius: 10px;
   overflow: hidden;
   transition: transform 0.5s ease;
   perspective: 1000px;
-  margin-right: 20px; 
-  margin-left: 20px; 
-}
-
-.event-img {
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  }
+  
+  .event-img {
   position: relative;
   overflow: hidden;
   border-radius: 10px 10px 0 0;
-}
-
-.event-cover {
+  }
+  
+  .event-cover {
   width: 100%;
   height: 200px;
   object-fit: cover;
   transition: transform 0.5s ease;
-}
-
-.parallax {
+  }
+  
+  .parallax {
   transform-style: preserve-3d;
-}
-
-.parallax:hover .event-cover {
+  }
+  
+  .parallax
+  .event-cover {
   transform: translateY(-10px) scale(1.1);
-}
-
-.event-details {
+  }
+  
+  .event-details {
   position: relative;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 0 0 10px 10px;
-}
-
-.event-details h3 {
+  }
+  
+  .event-details h3 {
   margin-top: 0;
-}
-
-.event-details p {
+  }
+  
+  .event-details p {
   margin-bottom: 15px;
-}
-
-.view-details-btn {
+  }
+  
+  .view-details-btn {
   background-color: #ffffff;
   border: 0 solid #e2e8f0;
   border-radius: 1.5rem;
@@ -327,12 +260,14 @@
   -webkit-user-select: none;
   touch-action: manipulation;
   transition: background-color 0.3s;
-}
-
-.view-details-btn:hover {
-    background-color: #0d3a82;
-    color: #fff;
-}
+  }
+  
+  .view-details-btn
+  {
+  background-color: #0d3a82;
+  color: #fff;
+  }
+  
 
 .profile-card-h{
   font:  bold 1.2em "Fira Sans", sans-serif;
@@ -347,6 +282,8 @@
 
 .profile-card-container {
   display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 
@@ -393,4 +330,34 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+
+.search-form {
+  margin-bottom: 20px; 
+}
+
+.search-form input[type="text"] {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px; 
+  box-sizing: border-box; 
+}
+
+
+.search-form button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #0d3a82; 
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+.search-form button:hover {
+  background-color: #0d172a; 
 }
