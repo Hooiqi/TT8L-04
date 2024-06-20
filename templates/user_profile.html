@@ -1,0 +1,215 @@
+{% extends 'base_user.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
+<style>
+    * {box-sizing: border-box;}
+
+    .account-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .account-card {
+        margin-bottom: 20px;
+        background-color: #f8f9fa;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+
+    .account-card-header {
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        padding: 0.75rem 1.25rem;
+    }
+
+    .account-card-body {
+        padding: 1.25rem;
+    }
+
+    .account-card-title {
+        margin-bottom: 0.75rem;
+        color: #495057;
+    }
+
+    .profile-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .profile-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .profile-table th {
+        background-color: #e9ecef;
+    }
+
+        
+    /* Button used to open the contact form */
+    .open-button {
+            background-color: #04AA6D;
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            bottom: 23px;
+            width: 280px;
+    }
+        
+    /* The popup form - hidden by default */
+    .form-popup {
+        display: none;
+        position: fixed;
+        z-index: 9;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+    
+    /* Add styles to the form container */
+    .form-container {
+        position: relative;
+        margin: 5% auto; /* 5% from the top and centered */
+        padding: 5px 30px 30px 30px;
+        width: 480px;
+        max-width: 100%;
+        background-color: white;
+        border: 1px solid #888;
+        border-radius: 10px;
+        animation: animatezoom 0.6s;
+    }
+        
+    /* Full-width input fields */
+    .form-container input[type=text], .form-container input[type=password] {
+        width: 100%;
+        padding: 15px;
+        margin: 5px 0 22px 0;
+        border: none;
+        background: #f1f1f1;
+    }
+        
+    /* When the inputs get focus, do something */
+    .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+        background-color: #ddd;
+        outline: none;
+    }
+        
+    .form-container .btn {
+        background-color: #04AA6D;
+        color: white;
+        padding: 16px 20px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom:10px;
+        opacity: 0.8;
+    }
+        
+    /* Add some hover effects to buttons */
+    .form-container .btn:hover, .open-button:hover {
+        opacity: 1;
+    }    
+
+    /* The Close Button (x) */
+    .close {
+        position: relative;
+        left: 410px;
+        top: 0;
+        color: #000;
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: red;
+        cursor: pointer;
+    }
+
+    @-webkit-keyframes animatezoom {
+        from {-webkit-transform: scale(0)} 
+        to {-webkit-transform: scale(1)}
+    }
+        
+    @keyframes animatezoom {
+        from {transform: scale(0)} 
+        to {transform: scale(1)}
+    }
+
+</style>
+{% endblock %}
+{% block content %}
+<main>
+    <div class="account-container">
+        <div class="account-card">
+            <div class="account-card-header">
+                <h1 class="account-card-title">My Profile</h1>
+            </div>
+            <div class="account-card-body">
+                <table class="profile-table">
+                    <tr>
+                        <td><b>ID</b></td>
+                        <td>{{ user.user_id }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Name</b></td>
+                        <td>{{ user.user_name }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Email</b></td>
+                        <td>{{ user.user_email }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Phone Number</b></td>
+                        <td>{{ user.user_phone }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: none;"><b>Password</b></td>
+                        <td style="border: none;"><button class="open-button" onclick="openForm()">Reset Password</button></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="resetPassword" class="form-popup">
+                <form class="form-container" action="{{ url_for('reset_password', user_id=user.user_id) }}" method="POST">
+                    {{ form.csrf_token }}
+
+                    <span onclick="closeForm()" class="close" title="Close Modal">&times;</span>
+                
+                    <div class="container">
+                        <h2>Reset Password</h2>
+                        <label for="old_pwd"><b>Old Password</b></label>
+                        {{ form.old_pwd }}
+                    
+                        <label for="new_pwd"><b>New Password</b></label>
+                        {{ form.new_pwd }}
+                        <label for="confirm_new_pwd"><b>Confirm New Password</b></label>
+                        {{ form.confirm_new_pwd }}
+                        
+                        <button type="submit">Reset Password</button>
+                    </div>
+                </form>
+                <script>
+                function openForm() {
+                    document.getElementById("resetPassword").style.display = "block";
+                }
+                
+                function closeForm() {
+                    document.getElementById("resetPassword").style.display = "none";
+                }
+                </script>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
