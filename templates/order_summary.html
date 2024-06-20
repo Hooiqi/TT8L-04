@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Ticket Summary{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
+<style>
+    .order-summary td, .order-summary th {
+        padding: 10px;
+        text-align: left;
+    }
+    .order-summary th {
+        width: 20%;
+    }
+    .order-summary {
+        width: 100%;
+    }
+
+    .purchase-ticket {
+        background-color: #04AA6D;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 10px 10px;
+        transition-duration: 0.4s;
+        border-radius: 12px;
+    }
+
+    .purchase-ticket:hover {
+        background-color: white;
+        color: black;
+        border: 2px solid #04AA6D;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="create-event-container" style="width: 30%;height: fit-content;padding: 60px;">
+    <div class="create-event-form">
+        <div style="position: relative;bottom: 25px">
+            <!--Display order summary-->
+            <h2>Order Summary</h2>
+            <table class="order-summary">
+                <tr>
+                    <th>Event</th> 
+                    <td>{{ event_name }}</td>
+                </tr>
+                <tr>
+                    <th>Ticket</th> 
+                    <td>{{ ticket_type }}</td>
+                </tr>
+                <tr>
+                    <th style="border-bottom: 1px solid #dee2e6;">Price</th> 
+                    <td style="border-bottom: 1px solid #dee2e6;">RM {{ ticket_price }}</td>
+                </tr>
+                <tr>
+                    <th>TOTAL</th> 
+                    <td>RM {{ ticket_price }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <form action="{{ url_for('checkout') }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <input type="hidden" name="event_name" value="{{ event_name }}">
+                            <input type="hidden" name="ticket_type" value="{{ ticket_type }}">
+                            <input type="hidden" name="ticket_price" value="{{ ticket_price }}">
+                            <input type="hidden" name="admin_id" value="{{ admin_id }}">
+                            <button type="submit" class="purchase-ticket" style="width: fit-content;">Proceed to Checkout</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Cancelled</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .cancel {
+            background-color: #00436a;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #fff;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .cancel h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .cancel p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .icon {
+        width: 100px;
+        height: 100px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="cancel">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="Cross"><g fill="#ffffff" class="color000000 svgShape"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2Zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12Z" fill="#ffffff" class="color000000 svgShape"></path><path d="M22.71 9.29a1 1 0 0 0-1.42 0L16 14.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42L17.41 16l5.3-5.29a1 1 0 0 0 0-1.42Z" fill="#ffffff" class="color000000 svgShape"></path></g></svg>
+        <h1>Payment Cancelled</h1>
+        <p>You will be redirected to home page.</p>
+    </div>
+    <script>
+        setTimeout(function() {
+            window.location.href = "{{ url_for('home') }}";
+        }, 3000);  // Redirect to homepage after 3 seconds
+    </script>
+</body>
+</html>
