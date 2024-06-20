@@ -88,7 +88,6 @@ def ticket_history(user_id):
 
     # Retrieve search query and status filter from URL query parameters
     search_query = request.args.get('search', '').strip()
-    status_filter = request.args.get('status', '').strip()
     
     categories_nav = EventCategory.query.all() # Event category in navigation bar
 
@@ -102,13 +101,9 @@ def ticket_history(user_id):
     if search_query:
         user_orders = user_orders.filter(Event.event_name.ilike(f'%{search_query}%'))
     
-    #Filter ticket history by order status
-    if status_filter:
-        user_orders = user_orders.filter(UserOrder.order_status.has(ostatus_name=status_filter))
-    
     user_orders = user_orders.all()
     
-    return render_template('ticket_history.html', user=user, user_orders=user_orders, search_query=search_query, status_filter=status_filter,
+    return render_template('ticket_history.html', user=user, user_orders=user_orders, search_query=search_query,
                            categories_nav=categories_nav)
 
 @app.route('/account/membership/<user_id>', methods=['GET'])
@@ -191,7 +186,7 @@ def event_category(category):
 
     return render_template('event-category.html', category=category_obj, event=events, categories_nav=categories_nav,
                             current_datetime=current_datetime, search_query=search_query, venue_filter=venue_filter, 
-                            sort=sort, pagination=events_pagination, include_expired=include_expired)
+                            sort=sort, pagination=events_pagination, include_expired=include_expired, user=current_user)
 
 @app.route('/events/details/<event_id>', methods=['GET'])
 @login_required
@@ -199,9 +194,6 @@ def event_details(event_id):
     categories_nav = EventCategory.query.all()
     event = Event.query.get_or_404(event_id)
     user_id = current_user.user_id
-
-    # Get the admin for the event
-    admin = Admin.query.get(event.admin_id)
 
     # Check if the user has already purchased a ticket for this event
     user_has_ticket = UserOrder.query.join(Ticket).filter(
@@ -221,15 +213,81 @@ def event_details(event_id):
     for ticket in event.tickets:
         sold_tickets = UserOrder.query.filter_by(ticket_id=ticket.ticket_id).count()
         remaining_tickets = ticket.max_quantity - sold_tickets
-        tickets_info.append((ticket, remaining_tickets))
+        if user_membership:
+            ticket_price = ticket.member_discount
+        else:
+            ticket_price = ticket.price
+        tickets_info.append((ticket, remaining_tickets, ticket_price))
 
     # Get current datetime
     current_datetime = datetime.now()
 
-    return render_template('EventDetails.html', event=event, user_has_ticket=user_has_ticket, 
-                           user_member_status='Accept' if user_membership else 'None', 
-                           tickets_info=tickets_info, current_datetime=current_datetime, categories_nav=categories_nav,
-                           stripe_public_key=admin.stripe_public_key)
+    return render_template('EventDetails.html', event=event, user_has_ticket=user_has_ticket,
+                           tickets_info=tickets_info, current_datetime=current_datetime, categories_nav=categories_nav, user=current_user)
+
+@app.route('/organisers', methods=['GET', 'POST'])
+@login_required
+def organisers():
+    categories_nav = EventCategory.query.all()
+    search_query = request.args.get('search', '').strip()
+    sort = request.args.get('sort', '').strip()
+    user_id = current_user.user_id
+
+    admin_query = Admin.query
+
+    # Apply search filter if search query is provided
+    if search_query:
+        admin_query = admin_query.filter(Admin.admin_name.ilike(f'%{search_query}%'))
+
+    # Apply sorting
+    if sort == 'a-z':
+        admin_query = admin_query.order_by(Admin.admin_name.asc())
+    elif sort == 'z-a':
+        admin_query = admin_query.order_by(Admin.admin_name.desc())
+
+    admins = admin_query.all()
+
+    # Check membership requests and status
+    memberships = Membership.query.filter_by(user_id=user_id).all()
+    membership_status = {membership.admin_id: membership.mstatus_id for membership in memberships}
+
+    for admin in admins:
+        admin.requested = membership_status.get(admin.admin_id) == 1  # Check 'Pending'
+        admin.approved_membership = membership_status.get(admin.admin_id) == 2  # Check 'Accept'
+
+    return render_template('organiser.html', categories_nav=categories_nav, organisers=admins, search_query=search_query, sort=sort, user=current_user)
+
+@app.route('/organisers/<admin_id>/<action>', methods=['POST'])
+@login_required
+def manage_membership(admin_id, action):
+    user_id = current_user.user_id
+
+    if action == 'request':
+        existing_membership = Membership.query.filter_by(user_id=user_id, admin_id=admin_id, mstatus_id=1).first()
+        if not existing_membership:
+            new_membership = Membership(
+                user_id=user_id,
+                admin_id=admin_id,
+                mstatus_id=1  # 1 represents Pending
+            )
+            db.session.add(new_membership)
+            db.session.commit()
+            flash('Membership request submitted!', 'success')
+
+    elif action == 'unjoin':
+        membership = Membership.query.filter_by(user_id=user_id, admin_id=admin_id, mstatus_id=2).first()
+        if membership:
+            db.session.delete(membership)
+            db.session.commit()
+            flash('Successfully unjoined membership.', 'success')
+    elif action == 'cancel':
+        membership = Membership.query.filter_by(user_id=user_id, admin_id=admin_id, mstatus_id=1).first()
+        if membership:
+            db.session.delete(membership)
+            db.session.commit()
+            flash('Membership request cancelled.', 'success')
+
+    return redirect(url_for('organisers'))
 
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
