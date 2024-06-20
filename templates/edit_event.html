@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_admin.html' %}
 
 {% block title %}Edit Event{% endblock %}
 
@@ -7,58 +7,36 @@
 {% endblock %}
 
 {% block content %}
+<script>
+    /* Popup message if reload page */   
+    window.addEventListener('beforeunload', function (e) {
+        var formSubmitting = document.querySelector('button[type="submit"][data-form-submitting="true"]');
+        if (!formSubmitting) {
+            var confirmationMessage = 'Changes you made may not be saved.';
+            (e || window.event).returnValue = confirmationMessage; // Gecko + IE
+            return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
+        }
+    });
+
+    // Add event listener to all submit buttons to set data attribute
+    document.addEventListener('DOMContentLoaded', function () {
+        var submitButtons = document.querySelectorAll('button[type="submit"]');
+        submitButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                button.setAttribute('data-form-submitting', 'true');
+            });
+        });
+    });
+</script>
 <main>
     <!-- Navigate to tab -->
     <div class="tab-container">
         <button class="tab-button" onclick="openTab(event, 'editEvent')" id="defaultOpen">EDIT EVENT</button>
         <button class="tab-button" onclick="openTab(event, 'previewEvent')">PREVIEW EVENT</button>
     </div>
-    
-    <!-- error/success messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert {{ category }}">
-                    <span class="closebtn">&times;</span>  
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
-    <script>
-        /* Close button on flash message */
-        var close = document.getElementsByClassName("closebtn");
-        var i;
 
-        for (i = 0; i < close.length; i++) {
-            close[i].onclick = function(){
-                var div = this.parentElement;
-                div.style.opacity = "0";
-                setTimeout(function(){ div.style.display = "none"; }, 600);
-            }
-        }
-        
-        /* Popup message if reload page */   
-        window.addEventListener('beforeunload', function (e) {
-            var formSubmitting = document.querySelector('button[type="submit"][data-form-submitting="true"]');
-            if (!formSubmitting) {
-                var confirmationMessage = 'Changes you made may not be saved.';
-                (e || window.event).returnValue = confirmationMessage; // Gecko + IE
-                return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
-            }
-        });
-
-        // Add event listener to all submit buttons to set data attribute
-        document.addEventListener('DOMContentLoaded', function () {
-            var submitButtons = document.querySelectorAll('button[type="submit"]');
-            submitButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    button.setAttribute('data-form-submitting', 'true');
-                });
-            });
-        });
-    </script>
+    
+    {% include 'flash_messages.html' %}
 
     <!-- Edit Event -->
     <div id="editEvent" class="tab-content">
@@ -155,8 +133,8 @@
                             <td><input type="number" step="0.01" name="tickets-${index}-price" placeholder="Normal price*" required></td>
                             <td><input type="number" step="0.01" name="tickets-${index}-member_discount" placeholder="Member price*" required></td>
                             <td><input type="number" name="tickets-${index}-max_quantity" placeholder="Quantity*" required></td>
-                            <td><input type="date" name="tickets-${index}-start_sale" required></td>
-                            <td><input type="date" name="tickets-${index}-end_sale"></td>
+                            <td><input type="datetime-local" name="tickets-${index}-start_sale" required></td>
+                            <td><input type="datetime-local" name="tickets-${index}-end_sale"></td>
                             <td><button type="button" onclick="removeTicketRow(this)">Remove</button></td>
                         `;
     
@@ -241,11 +219,11 @@
                         </table>
                     </div>
                     
-                    <div class="ticket-section">
-                        <h2>Tickets</h2>
+                    <div class="ticket-section" style="margin-bottom: 80px;">
+                        <h2>Ticket</h2>
                         <!-- Display tickets -->
                         {% for ticket in event.tickets %}
-                        <div class="ticket-container">
+                        <div class="card2">
                             <div class="ticket-detail">
                                 <h3>{{ ticket.ticket_type }}</h3>
 
@@ -264,17 +242,11 @@
 
                             </div>
                             
-                            <div class="quantity-select">
-                                <select id="quantity">
-                                    <option value="0">0</option>
-                                    <option value="1">1</option>
-                                </select>
-                            </div>
+                            <button class="purchase-ticket" id="purchaseTicketButton" onclick="purchaseTicket()" disabled>Buy A Ticket</button>
+
                         </div>
                         {% endfor %}
                     </div>
-                    <br><br><br>
-                    <button class="purchase-ticket" id="purchaseTicketButton" onclick="purchaseTicket()" disabled>Purchase Ticket</button>
                 </div>
             </form>
         </div>
