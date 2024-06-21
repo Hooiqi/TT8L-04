@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField, TimeField, DateTimeField, DateTimeLocalField, SelectField, PasswordField, FieldList, FormField, DecimalField, IntegerField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Optional, EqualTo, Length, NumberRange, InputRequired
-from flask_wtf.file import FileField, FileRequired, FileAllowed
+from wtforms import StringField, TextAreaField, DateField, TimeField, DateTimeLocalField, SelectField, PasswordField, FieldList, FormField, DecimalField, IntegerField, SubmitField
+from wtforms.validators import DataRequired, ValidationError, EqualTo, Length, NumberRange, InputRequired
+from flask_wtf.file import FileField, FileAllowed
 from models import User
 
 class SignupForm(FlaskForm):
@@ -25,7 +25,7 @@ class SignupForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
     old_pwd = PasswordField('Old Password', validators=[DataRequired()], render_kw={"placeholder": "Enter Old Password"})
-    new_pwd = PasswordField('New Password', validators=[DataRequired(), Length(min=8, message="Password must have at least 8 characters")], render_kw={"placeholder": "Enter New Password"})
+    new_pwd = PasswordField('New Password', validators=[DataRequired()], render_kw={"placeholder": "Enter New Password"})
     confirm_new_pwd = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_pwd', message='Passwords must match.')], render_kw={"placeholder": "Confirm New Password"})
         
 class TicketForm(FlaskForm):
@@ -51,7 +51,7 @@ class EventForm(FlaskForm):
     event_descr = TextAreaField('Description', validators=[DataRequired()], render_kw={"placeholder": "Event details*"})
     event_venue = SelectField('Location type', choices=[('V01', 'On campus'), ('V02', 'Off campus'), ('V03', 'Online')], validators=[DataRequired()])
     location_detail = StringField('Location/Platform',  validators=[DataRequired()], render_kw={"placeholder": "Details*"})
-    tickets = FieldList(FormField(TicketForm), min_entries=1)
+    tickets = FieldList(FormField(TicketForm))
     publish_status = StringField('Publish Status')
 
     def validate_event_end(self, filed):
