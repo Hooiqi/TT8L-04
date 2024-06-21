@@ -45,31 +45,52 @@
   </div>
   {% endfor %}
 
-  <br>
+  <div class="slideshow-controls">
+    <button id="prevBtn" onclick="prevSlide()"> < </button>
+    <button id="nextBtn" onclick="nextSlide()"> > </button>
+  </div>
 </div>
 
-<script>
-let slideIndex = 0; 
-showSlides();
 
-function showSlides() {
-  let i;
-  let slides = document.getElementsByClassName("mySlides");
+<script>
+  let slideIndex = 1; // Start from the first slide
+  let autoSlide;
   
-  // Hide all slides
-  for (i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";  
+  // Function to initialize slideshow
+  showSlides();
+  
+  function showSlides() {
+      let slides = document.getElementsByClassName("mySlides");
+      
+      // Hide all slides
+      for (let i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";  
+      }
+      
+      // Display the current slide
+      slides[slideIndex - 1].style.display = "block";  
+      
+      // Clear previous timeout and set new timeout for next slide
+      clearTimeout(autoSlide);
+      autoSlide = setTimeout(nextSlide, 4000); // Automatically move to next slide after 4 seconds
   }
   
-  // Increment index and reset to 1 if at end of slides
-  slideIndex++;
-  if (slideIndex > slides.length) { slideIndex = 1 }    
+  // Function to navigate to next slide
+  function nextSlide() {
+      let slides = document.getElementsByClassName("mySlides");
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1 } // Loop back to the first slide if end is reached
+      showSlides();
+  }
   
-  slides[slideIndex-1].style.display = "block";  
-  
-  setTimeout(showSlides, 3000); 
-}
-</script>
+  // Function to navigate to previous slide
+  function prevSlide() {
+      let slides = document.getElementsByClassName("mySlides");
+      slideIndex--;
+      if (slideIndex < 1) { slideIndex = slides.length } // Loop to the last slide if beginning is reached
+      showSlides();
+  }
+  </script>
 
 <div class="event-slider-container" id="eventSliderContainer">
   <h2>Upcoming Events</h2>

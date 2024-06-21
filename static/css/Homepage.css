@@ -133,14 +133,33 @@
 }
 
 .mySlides img { 
-  display: block; 
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: 100%;
-  height: auto; /* Maintain aspect ratio of images */
-  object-fit: contain; /* Scale images to cover the entire slide */
-  border-radius: 8px; /* Add rounded corners to the slide */
+  display: inline-block; 
+  width: 700px;
+  height: 600px;; /* Maintain aspect ratio of images */
+  object-fit: cover; /* Scale images to cover the entire slide */
+  border-radius: 8px; 
+  margin: 0 auto;
+}
+
+.slideshow-controls {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 10;
+}
+.slideshow-controls button {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  color: black;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.slideshow-controls button:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
 }
 
 /* Fading animation */
