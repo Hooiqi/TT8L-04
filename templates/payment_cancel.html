@@ -16,7 +16,7 @@
         }
 
         .cancel {
-            background-color: #00436a;
+            background-color: red;
             padding: 30px;
             border-radius: 10px;
             text-align: center;
@@ -54,7 +54,7 @@
     </div>
     <script>
         setTimeout(function() {
-            window.location.href = "{{ url_for('home') }}";
+            window.location.href = "{{ url_for('user_view.home') }}";
         }, 3000);  // Redirect to homepage after 3 seconds
     </script>
 </body>

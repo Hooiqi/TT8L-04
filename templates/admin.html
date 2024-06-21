@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="admin-profile-container">
+        <form class="admin-profile-form">
+            <div class="form-group">
+                <label for="admin-name">Name:</label>
+                <textarea id="admin-name" name="admin-name">{{ admin.admin_name }}</textarea>
+                
+              <div class="form-group">
+                <label for="admin-description">Description:</label>
+                <textarea id="admin-description" name="admin-description">{{ admin.admin_descr }}</textarea>
+              </div>
+              
+              <div class="login">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

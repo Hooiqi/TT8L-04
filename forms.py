@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DateField, TimeField, DateTimeField, DateTimeLocalField, SelectField, PasswordField, FieldList, FormField, DecimalField, IntegerField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Optional, EqualTo, Length, NumberRange, InputRequired
-from flask_wtf.file import FileField, FileRequired, FileAllowed
+from wtforms import StringField, TextAreaField, DateField, TimeField, DateTimeLocalField, SelectField, PasswordField, FieldList, FormField, DecimalField, IntegerField, SubmitField
+from wtforms.validators import DataRequired, ValidationError, EqualTo, Length, NumberRange, InputRequired
+from flask_wtf.file import FileField, FileAllowed
 from models import User
 
 class SignupForm(FlaskForm):

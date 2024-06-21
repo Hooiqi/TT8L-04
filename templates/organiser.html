@@ -1,0 +1,146 @@
+{% extends 'base_user.html' %}
+
+{% block title %}Organisers | Event{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
+<style>
+    .organiser-card-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two columns */
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .organiser-card {
+        position: relative;
+        display: flex;
+        background-color: #f9f9f9;
+        border-radius: 50px;
+        overflow: hidden;
+        transition: transform 0.5s ease;
+        padding: 20px;
+    }
+
+    .organiser-card img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 100%;
+    }
+
+    .organiser-card-details {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-left: 20px;
+        flex: 1;
+    }
+
+    .organiser-card a {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1; 
+        text-decoration: none; 
+    }
+
+    .organiser-card h3 {
+        margin: 0;
+    }
+
+    .organiser-card-title,
+    .organiser-card p {
+        margin: 5px 0;
+    }
+
+    .request-btn {
+        width: 180px; 
+        padding-top: 10px;
+        padding-bottom: 10px;
+        float: right; /* Position the button to the bottom right */
+        position: relative;
+        z-index: 2;
+    }
+
+    @media (max-width: 768px) {
+        .organiser-card-container {
+            grid-template-columns: 1fr; /* One column on smaller screens */
+        }
+    }
+
+    .search-sort-box td{
+        padding: 5px;
+        background-color: aqua;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin: 5% 10%;">
+    <!-- Include the flash messages template -->
+    {% include 'flash_messages.html' %}
+
+    <h1  style="font-size: 40px;padding: 0 30px;">Organisers</h1>
+    
+    <form class="search-sort-container" method="GET" action="{{ url_for('user_view.organisers') }}">
+        <div class="search-box">
+            <input type="text" name="search" placeholder="Search organiser..." value="{{ search_query }}">
+            <button type="submit" style="width: 100px;">Search</button>
+            <a href="{{ url_for('user_view.organisers') }}"><i class="fa reset-btn">&#xf021;</i></a>
+        </div>
+        <div class="sort-form">
+            <label for="sort">Sort:</label>
+                <select name="sort" id="sortDropdown" style="width: auto;">
+                    <option value="">Default</option>
+                    <option value="a-z" {% if sort == 'a-z' %}selected{% endif %}>Alphabetically (A-Z)</option>
+                    <option value="z-a" {% if sort == 'z-a' %}selected{% endif %}>Alphabetically (Z-A)</option>
+                </select>
+            </label>
+        </div>
+    </form>
+
+    <!-- Submit sort option without submit button -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sortDropdown').addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
+    </script>
+
+    <div class="organiser-card-container">
+        {% for organiser in organisers %}
+            <div class="organiser-card card">
+                <a href="{{ url_for('user_view.organiser_details', admin_id=organiser.admin_id) }}"></a>
+                <img src="{{ url_for('static', filename='images/' ~ organiser.admin_img) }}" alt="Organiser">
+                <div class="organiser-card-details">
+                    <h3>{{ organiser.admin_name }}</h3>
+                    <p class="organiser-card-title">{{ organiser.admin_email }}</p>
+                    {% if organiser.approved_membership %}
+                    <form action="{{ url_for('user_view.manage_membership', admin_id=organiser.admin_id, action='unjoin') }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" name="action" value="unjoin" class="view-details-btn request-btn" style="background-color: #0d3a82;color: #fff;"
+                            onclick="return confirm('Are you sure you want to unjoin?');">Unjoin</button>
+                    </form>
+                    {% elif organiser.requested %}
+                        <form action="{{ url_for('user_view.manage_membership', admin_id=organiser.admin_id, action='cancel') }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" name="action" value="cancel" class="view-details-btn request-btn" style="background-color: #0d3a82;color: #fff;">
+                                Cancel request</button>
+                        </form>
+                    {% else %}
+                        <form action="{{ url_for('user_view.manage_membership', admin_id=organiser.admin_id, action='request') }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" name="action" value="request" class="view-details-btn request-btn"
+                                onclick="return confirm('Are you sure you want to request to join as member?');">Request to Join</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -17,7 +17,7 @@
     }
 
     .success {
-    background-color: #00436a;
+    background-color: rgb(41, 207, 0);
     padding: 30px;
     border-radius: 10px;
     text-align: center;
@@ -53,7 +53,7 @@
         <p>You will be redirected to home page. Thank you!</p>
     <script>
         setTimeout(function() {
-            window.location.href = "{{ url_for('home') }}";
+            window.location.href = "{{ url_for('user_view.home') }}";
         }, 3000);  
     </script>
     </div>

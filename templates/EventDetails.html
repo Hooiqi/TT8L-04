@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_user.html' %}
 
 {% block title %}{{ event.event_name }} | Event{% endblock %}
 
@@ -135,7 +135,7 @@
                         <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Sales Period Over</button>
                     {% else %}
                     <a class="purchase-ticket" 
-                       href="{{ url_for('order_summary', event_name=event.event_name, ticket_type=ticket.ticket_type, 
+                       href="{{ url_for('user_view.order_summary', event_name=event.event_name, ticket_type=ticket.ticket_type, ticket_id=ticket.ticket_id, 
                                         ticket_price=ticket_price) }}">
                         Buy A Ticket
                     </a>
