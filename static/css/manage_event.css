@@ -1,0 +1,32 @@
+body {
+  font-family: "Arial", sans-serif;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+.form-inline .form-group {
+  margin-bottom: 0;
+}
+
+.btn-primary {
+  border-radius: 20px; /* Make buttons oval-shaped */
+  background-color: #e4ebef; /* Blue background color */
+  border-color: #144376; /* Blue border color */
+  color: #0b0000; /* White text color */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition on hover */
+  font-family:'Dancing Script', cursive;
+}
+
+.btn-danger {
+  border-radius: 20px; /* Make buttons oval-shaped */
+  background-color: #e4ebef; /* Blue background color */
+  border-color: #144376; /* Blue border color */
+  color: #0b0000; /* White text color */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition on hover */
+  font-family:'Dancing Script', cursive;
+}
+
+

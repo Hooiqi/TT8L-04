@@ -1,0 +1,147 @@
+{% extends 'base_user.html' %}
+
+{% block title %}{{ organiser.admin_name }} | Organiser{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<style>
+    /* Adjustments for responsive design */
+    @media (max-width: 768px) {
+        .event-organiser-container {
+            grid-template-columns: repeat(2, 1fr); /* Two columns on medium screens */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .event-organiser-container {
+            grid-template-columns: 1fr; /* One column on small screens */
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Include the flash messages template -->
+{% include 'flash_messages.html' %}
+
+<div class="organiser-container">
+    <div class="organiser-details-container" style="width: 95%;">
+        <div class="organiser-header">
+            <!-- Display organiser photo -->
+            <div class="organiser-picture">
+                <img src="{{ url_for('static', filename='images/' ~ organiser.admin_img) }}" alt="Organiser">
+            </div>
+
+            <!-- Display organiser information -->
+            <div class="organiser-info">
+                <table class="profile-table" style="width: 100%">
+                    <tr>
+                        <td style="width: 25%"><b>Name</b></td>
+                        <td>{{ organiser.admin_name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%"><b>Email</b></td>
+                        <td>{{ organiser.admin_email }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 25%"><b>Phone number</b></td>
+                        <td>{{ organiser.admin_phone }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="organiser-desc">
+            <!-- Display organiser description -->
+            <h2 style="margin:10px 0;">Description</h2>
+            <table>
+                <tr>
+                    <td style="text-align: justify;">{{ organiser.admin_descr.replace('\n', '<br>') | safe }}</td>
+                </tr>
+            </table>
+        </div>
+            
+        <!-- Display button based on member status -->
+        {% if organiser.approved_membership %}
+            <form action="{{ url_for('user_view.details_manage_membership', admin_id=organiser.admin_id, action='unjoin') }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="view-details-btn request-btn" name="action" value="unjoin" style="background-color: #0d3a82;color: #fff; margin-bottom: 20px;"
+                    onclick="return confirm('Are you sure you want to unjoin?');">Unjoin</button>
+            </form>
+        {% elif organiser.requested %}
+            <form action="{{ url_for('user_view.details_manage_membership', admin_id=organiser.admin_id, action='cancel') }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="view-details-btn request-btn" name="action" value="cancel" style="background-color: #0d3a82;color: #fff; margin-bottom: 20px;">
+                    Cancel request
+                </button>
+            </form>
+        {% else %}
+            <form action="{{ url_for('user_view.details_manage_membership', admin_id=organiser.admin_id, action='request') }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="view-details-btn request-btn" name="action" value="request" style="margin-bottom: 20px;"
+                    onclick="return confirm('Are you sure you want to request to join as member?');">Request to Join</button>
+            </form>
+        {% endif %}
+        
+    </div>
+</div>
+
+
+<!-- Related Events Section -->
+<div class="all-events-container">
+    <h1 style="margin-top: 40px; margin-left: 40px;">Related Events</h1>
+    {% if events %}
+        <div class="event-organiser-container">
+            {% for event in events %}
+                <!-- Adding grayscale to expired event -->
+            <div class="event-organiser-card {% if event.event_end < current_datetime %}event-expired-container expired-event {% endif %}" 
+            data-label="{% if event.event_end < current_datetime %}Expired{% endif %}">
+                    <div class="event-img parallax">
+                        <img src="{{ url_for('static', filename='images/' ~ (event.event_img or 'default_poster.png')) }}" 
+                            alt="{{ event.event_name }}" class="event-cover">
+                    </div>
+                    <div class="event-organiser-details">
+                        <p>{{ event.admin.admin_name }}</p>
+                        <p>{{ event.event_start.strftime('%B %d, %Y') }}, {{ event.event_time.strftime('%I:%M %p') }}</p>
+                        <a href="{{ url_for('user_view.event_details', event_id=event.event_id) }}">
+                            <button class="view-details-btn">View Details</button>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align: center;">No published events.</p>
+    {% endif %}
+
+    <!-- Pagination controls -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if pagination.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('user_view.event_category', category=category.category if category else None, page=pagination.next_num, search=search_query, venue_type=venue_filter, expired=request.args.get('expired'), sort=sort) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+                {% if page_num %}
+                    <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('user_view.event_category', category=category.category if category else None, page=pagination.next_num, search=search_query, venue_type=venue_filter, expired=request.args.get('expired'), sort=sort) }}">{{ page_num }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                {% endif %}
+            {% endfor %}
+    
+            {% if pagination.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('user_view.event_category', category=category.category if category else None, page=pagination.next_num, search=search_query, venue_type=venue_filter, expired=request.args.get('expired'), sort=sort) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>        
+</div>
+{% endblock %}
