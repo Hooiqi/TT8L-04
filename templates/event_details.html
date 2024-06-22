@@ -1,0 +1,113 @@
+{% extends 'base_user.html' %}
+
+{% block title %}{{ event.event_name }} | Event{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="event-form-container">
+    <div class="event-form">
+        <h1 style="font-size: 40px; text-align: center;">{{ event.event_name }}</h1>
+        
+        <!-- Display poster -->
+        {% if event.event_img != None: %}
+        <div class="poster-container">
+            <div class="poster-background-blur" style="background-image: url('{{ url_for('static', filename='images/' ~ event.event_img) }}');"></div>
+            <img src="{{ url_for('static', filename='images/' ~ event.event_img) }}" alt="Event Poster" class="poster-foreground-image">
+        </div>
+        {% endif %}
+
+        <!-- Display event details -->
+        <div class="event-detail-container">
+            <div class="event-section">
+                <table class="event-display">
+                    <tr>
+                        <th>Organiser</th>
+                        <td><a href="{{ url_for('user_view.organiser_details', admin_id=event.admin.admin_id) }}">{{ event.admin.admin_name }}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Location/Platform</th>
+                        <td>{{ event.location_details }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td>
+                            {% if event.event_start == event.event_end %}
+                                {{ event.event_start_formatted }}
+                            {% else %}
+                                {{ event.event_start_formatted }} - {{ event.event_end_formatted }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Start Time</th>
+                        <td>{{ event.event_time_formatted }}</td>
+                    </tr>
+                    <tr>
+                        <th>Duration</th>
+                        <td>{{ event.event_duration }}</td>
+                    </tr>
+                </table>
+
+                <!-- Display event description -->
+                <h2>About this event</h2>
+                <table>
+                    <tr>
+                        <td style="text-align: justify;">{{ event.event_descr.replace('\n', '<br>') | safe }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Display tickets -->
+            <div class="ticket-section" style="margin-bottom: 80px;">
+            {% if tickets_info %}
+                <h2>Ticket</h2>
+                {% for ticket, remaining_tickets, ticket_price in tickets_info %}
+                <div class="ticketcard" style="padding: 30px;">
+                    <div class="ticket-detail">
+                        <h3 style="font-size: 18px;">{{ ticket.ticket_type }}</h3>
+
+                        <!-- Display price to "free" if price is 0 -->
+                        {% if ticket.price == 0.00 and ticket.member_discount == 0.00 %}
+                            <label for="price">Free</label>
+                        {% else %}
+                            <div class="prices">
+                                <label for="normal-price">Normal Price: </label>
+                                <label for="normal-price">RM {{ ticket.price }}</label>
+                            </div>
+                            <div class="prices">
+                                <label for="member-price">Member Price: </label>
+                                <label for="member-price">RM {{ ticket.member_discount }}</label>
+                            </div>
+                        {% endif %}
+                        <p style="font-size: 12px;">
+                            Sales Period: {{ ticket.start_sale.strftime('%B %d, %Y, %I:%M %p') }} - {{ ticket.end_sale.strftime('%B %d, %Y, %I:%M %p') }}
+                        </p>
+                    </div>
+
+                    <!-- Display button style based on different condition -->
+                    {% if user_has_ticket %}
+                        <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Event Ticket Purchased</button>
+                    {% elif remaining_tickets <= 0 %}
+                        <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Sold Out</button>
+                    {% elif current_datetime < ticket.start_sale %}
+                        <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Sales Haven't Started</button>
+                    {% elif current_datetime > ticket.end_sale %}
+                        <button class="purchase-ticket noHover" style="width: auto;background-color: #888;" disabled>Sales Period Over</button>
+                    {% else %}
+                    <a class="purchase-ticket" 
+                       href="{{ url_for('user_view.order_summary', event_name=event.event_name, ticket_type=ticket.ticket_type, ticket_id=ticket.ticket_id, 
+                                        ticket_price=ticket_price) }}">
+                        Buy A Ticket
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+<!-- template for admin_view -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="https://www.mmu.edu.my/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <script src="https://kit.fontawesome.com/8d1db3e4f7.js" crossorigin="anonymous"></script>
+    {% block head %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+        *{
+            font-family: Optima,Segoe,Segoe UI,Candara,Calibri,Arial,sans-serif; ;
+        }
+        main{
+            min-height: 600px;
+        }
+        .topnavbar .left {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body style="min-height: 768px;">
+    <!-- navigation bar -->
+    <div class="topnavbar">
+        <div class="left">
+            <div class="logo">
+                <p><span>MMU</span>Event</p>
+            </div>
+        </div>
+        <div class="right">
+            <ul>
+                <li><a href="{{ url_for('admin_view.admin_home' ) }}">Dashboard</a></li>
+                <li><a href="{{ url_for('auth.logout' ) }}">Log Out</a></li>
+            </ul>
+        </div>
+    </div>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer"><span>@2024 MMUEvent by TT8L-04 | All rights reserved</span></footer>
+</body>
+</html>

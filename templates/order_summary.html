@@ -1,0 +1,88 @@
+{% extends 'base_user.html' %}
+
+{% block title %}Ticket Summary{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<style>
+    .purchase-ticket {
+        background-color: #04AA6D;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        display: block;
+        margin: 20px auto; 
+        transition-duration: 0.4s;
+        border-radius: 12px;
+    }
+
+    .purchase-ticket:hover {
+        background-color: white;
+        color: black;
+        border: 2px solid #04AA6D;
+    }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="order-summary-container" style="width: 30%;height: fit-content;padding: 60px;">
+    <div class="order-summary-form">
+        <div style="position: relative;bottom: 25px">
+            <!--Display order summary-->
+            <h2 style="margin-bottom: 20px" >Order Summary</h2>
+            <table class="order-summary">
+                <tr>
+                    <th>Event</th> 
+                    <td>{{ event_name }}</td>
+                </tr>
+                <tr>
+                    <th>Ticket</th> 
+                    <td>{{ ticket_type }}</td>
+                </tr>
+                <tr>
+                    <th style="border-bottom: 1px solid #dee2e6;">Price</th> 
+                    <td style="border-bottom: 1px solid #dee2e6;">RM {{ ticket_price }}</td>
+                </tr>
+                <tr>
+                    <th>TOTAL</th> 
+                    <td>RM {{ ticket_price }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <!-- Differentiate the route for free and priced tickets -->
+                        {% if ticket_price == '0.00' %}
+                            <form action="{{ url_for('user_view.confirm_order') }}" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="ticket_id" value="{{ ticket_id }}">
+                                <button type="submit" class="purchase-ticket" style="width: fit-content; margin-top: 10px; margin-bottom: -30px;"
+                                onclick="return confirm('Are you sure you want to buy this ticket? ');">
+                                    Confirm Order
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('user_view.checkout') }}" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="event_name" value="{{ event_name }}">
+                                <input type="hidden" name="ticket_id" value="{{ ticket_id }}">
+                                <input type="hidden" name="ticket_type" value="{{ ticket_type }}">
+                                <input type="hidden" name="ticket_price" value="{{ ticket_price }}">
+                                <input type="hidden" name="admin_id" value="{{ admin_id }}">
+                                <button type="submit" class="purchase-ticket" style="width: fit-content; margin-top: 10px; margin-bottom: -30px;">
+                                    Proceed to Checkout
+                                </button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

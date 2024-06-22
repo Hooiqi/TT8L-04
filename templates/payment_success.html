@@ -1,0 +1,61 @@
+<!-- payment_success.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+    body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    }
+
+    .success {
+    background-color: rgb(41, 207, 0);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    max-width: 400px;
+    width: 100%;
+    }
+
+    .success h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    }
+
+    .success p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    }
+
+    .icon {
+        width: 100px;
+        height: 100px;
+    }
+
+
+    </style>
+</head>
+<body>
+    <div class="success">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="Tick"><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4ZM14.66,20.75l9-8-1.32-1.5L14,18.63,9.71,14.29,8.29,15.71l5,5A1,1,0,0,0,14,21,1,1,0,0,0,14.66,20.75Z" fill="#ffffff" class="color000000 svgShape"></path></svg>
+        <h1>Order Successful!</h1>
+        <p>You will be redirected to home page. Thank you!</p>
+    <script>
+        setTimeout(function() {
+            window.location.href = "{{ url_for('user_view.home') }}";
+        }, 3000);  // Redirect to homepage after 3 seconds
+    </script>
+    </div>
+</body>
+</html>

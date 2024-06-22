@@ -1,0 +1,127 @@
+{% extends 'base_user.html' %}
+
+
+{% block title %}{{ category.category if category else "All Events"}} | MMUEvent{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+
+    /* Adjustments for responsive design */
+    @media (max-width: 768px) {
+        .event-organiser-container {
+            grid-template-columns: repeat(2, 1fr); /* Two columns on medium screens */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .event-organiser-container {
+            grid-template-columns: 1fr; /* One column on small screens */
+        }
+    }
+
+</style>
+    
+{% endblock %}
+
+{% block content %}
+    <div style="margin: 5% 10%;">
+        <div class="categories-header">
+            <h1 style="font-size: 40px;padding: 0 30px;">{{ category.category if category else "All Events" }}</h1>
+            <!-- Search, filter and sort -->
+            <form class="search-sort-container" method="GET" action="{{ url_for('user_view.event_category', category=category.category if category else None) }}">
+                <div class="search-box">
+                    <input type="text" name="search" placeholder="Search event..." value="{{ search_query }}"></td>
+                    <select name="venue_type">
+                        <option value="">All Location</option>
+                        <option value="On campus" {% if venue_filter == 'On campus' %}selected{% endif %}>On campus</option>
+                        <option value="Off campus" {% if venue_filter == 'Off campus' %}selected{% endif %}>Off campus</option>
+                        <option value="Online" {% if venue_filter == 'Online' %}selected{% endif %}>Online</option>
+                    </select>
+                    <label for="expired"><input type="checkbox" name="expired" {% if include_expired %}checked{% endif %}> Include Expired</label>
+
+                    <button type="submit">Search</button>
+                    <a href="{{ url_for('user_view.event_category', category=category.category if category else None) }}"><i class="fa">&#xf021;</i></a></td>
+                </div>
+                <div class="sort-form">
+                    <label for="sort">Sort:
+                        <select name="sort" id="sortDropdown">
+                            <option value="">Default</option>
+                            <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
+                            <option value="a-z" {% if sort == 'a-z' %}selected{% endif %}>Alphabetically (A-Z)</option>
+                            <option value="z-a" {% if sort == 'z-a' %}selected{% endif %}>Alphabetically (Z-A)</option>
+                        </select>
+                    </label>
+                </div>
+            </form>
+        </div>
+        <!-- Submit sort option without submit button -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('sortDropdown').addEventListener('change', function() {
+                    this.form.submit();
+                });
+            });
+        </script>
+
+        {% if event %}
+        <div class="event-organiser-container">
+            {% for event in event %}
+            
+            <!-- Adding grayscale to expired event -->
+            <div class="event-organiser-card {% if event.event_end < current_datetime %}event-expired-container expired-event {% endif %}" 
+            data-label="{% if event.event_end < current_datetime %}Expired{% endif %}">
+                <div class="event-img parallax">
+                    <img src="{{ url_for('static', filename='images/' ~ (event.event_img or 'default_poster.png')) }}" 
+                        alt="{{ event.event_name }}" class="event-cover">
+                </div>
+                <div class="event-organiser-details">
+                    <h3>{{ event.event_name }}</h3>
+                    <a href="{{ url_for('user_view.organiser_details', admin_id=event.admin.admin_id) }}"><p>{{ event.admin.admin_name }}</p></a>
+                    <p>{{ event.event_start.strftime('%B %d, %Y') }}, {{ event.event_time.strftime('%I:%M %p') }}</p>
+                    <a href="{{ url_for('user_view.event_details', event_id=event.event_id) }}">
+                        <button class="view-details-btn">View Details</button>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="text-align: center;">No results found.</p>
+        {% endif %}
+
+        <!-- Pagination controls -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <!-- Previous page -->
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('user_view.event_category', category=category.category if category else None, page=pagination.next_num, search=search_query, venue_type=venue_filter, expired=request.args.get('expired'), sort=sort) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                <!-- Page number in the middle -->
+                {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('user_view.event_category', category=category.category if category else None, page=pagination.next_num, search=search_query, venue_type=venue_filter, expired=request.args.get('expired'), sort=sort) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    {% endif %}
+                {% endfor %}
+        
+                <!-- Next page -->
+                {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('user_view.event_category', category=category.category if category else None, page=pagination.next_num, search=search_query, venue_type=venue_filter, expired=request.args.get('expired'), sort=sort) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>        
+    </div>
+{% endblock %}

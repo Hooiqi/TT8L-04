@@ -1,0 +1,65 @@
+{% extends 'base_user.html' %}
+
+{% block title %}My Membership{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="account-container">
+        <div class="account-card">
+            <div class="account-card-header">
+                <h1 class="account-card-title">My Membership</h1>
+                <!-- Search by organiser name -->
+                <form class="search-box" method="GET" action="{{ url_for('user_view.user_membership', user_id=user.user_id) }}">
+                    <input type="text" name="search" placeholder="Search organisers..." value="{{ search_query }}">
+                    <select name="status">
+                        <option value="">All</option>
+                        <option value="Accept" {% if status_filter == 'Accept' %}selected{% endif %}>Joined</option>
+                        <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending request</option>
+                        <option value="Reject" {% if status_filter == 'Rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                    <button type="submit" style="width: 100px;">Search</button>
+                </form>
+            </div>
+            <div class="account-card-body">
+                <!-- Check if record existed -->
+                {% if memberships %} 
+                <!-- Display record if existed -->
+                <table class="ticket-history-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 65%;">Organiser</th>
+                            <th style="width: 15%;">Status</th>
+                            <th style="width: 15%;">Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for admin, membership in memberships %}
+                        <tr>
+                            <td>{{ loop.index }}</td> <!-- Display number list -->
+                            <td><a href="{{ url_for('user_view.organiser_details', admin_id=admin.admin_id) }}">{{ admin.admin_name }}</a></td>
+                            <td>  <!-- Display member status -->
+                                {% if membership.member_status.mstatus_name == 'Accept' %}
+                                    <span class="badge badge-success">Joined</span>
+                                {% elif membership.member_status.mstatus_name == 'Pending' %}
+                                    <span class="badge badge-warning">Pending request</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ membership.last_updated.strftime('%Y-%m-%d') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Text displayed if no record -->
+                {% else %} 
+                <p style="text-align: center;">No records found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
