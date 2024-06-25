@@ -7,12 +7,18 @@ from flask_bcrypt import Bcrypt
 auth = Blueprint('auth', __name__)
 bcrypt = Bcrypt()
 
+@auth.route('/', methods=['GET', 'POST'])
+def index():
+    print(url_for('auth.login'))  # Debug statement
+    return render_template("index.html", user=current_user)
+
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
 
+    # Check input value
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.user_pwd.data).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(form.user_pwd.data).decode('utf-8') # hash password
         new_user = User(
             user_id=form.user_id.data,
             user_name=form.user_name.data,
@@ -26,12 +32,12 @@ def signup():
         flash(f'User created successfully!', 'success')
         return redirect(url_for('auth.login'))
     
-    else:
+    else: # Show error messages
         for field, errors in form.errors.items():
             for error in errors:
                 flash(f"Error in {getattr(form, field).label.text}: {error}", 'danger')
 
-    return render_template('Signuppage.html', form=form)
+    return render_template('signup.html', form=form)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -41,7 +47,8 @@ def login():
 
         user = User.query.filter_by(user_id=id).first()
         admin = Admin.query.filter_by(admin_id=id).first()
-
+        
+        # Show check if value matched record
         if user:
             if bcrypt.check_password_hash(user.user_pwd, password):
                 login_user(user, remember=True)
@@ -57,14 +64,10 @@ def login():
         else:
             flash('ID does not exist.', category='error')
 
-    return render_template("Loginpage.html", user=current_user)
+    return render_template("login.html", user=current_user)
 
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
-
-@auth.route('/', methods=['GET', 'POST'])
-def index():
-    return render_template("index.html", user=current_user)

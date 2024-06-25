@@ -1,89 +1,24 @@
 {% extends 'base_user.html' %}
 
 
-{% block title %}{{ category.category if category else "All Events"}} | MMU Event{% endblock %}
+{% block title %}{{ category.category if category else "All Events"}} | MMUEvent{% endblock %}
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-    .event-category-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* Three columns */
-        gap: 40px; /* Space between grid items */
-        padding: 20px;
-    }
-    .event-cat-container {
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        overflow: hidden;
-        transition: transform 0.5s ease;
-        position: relative;
-    }
-    .event-expired-container {
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        overflow: hidden;
-        transition: transform 0.5s ease;
-        position: relative;
-    }
-
-    .event-expired-container::after{
-    position: absolute;
-    content: attr(data-label);
-    top: 11px;
-    right: -14px;
-    padding: 0.5rem;
-    width: 8rem;
-    background: #3949ab;
-    border-radius: 50px;
-    color: white;
-    text-align: center;
-    font-family: 'Roboto', sans-serif;
-    box-shadow: 4px 4px 15px rgba(26, 35, 126, 0.2);
-    }
-
-    .event-details {
-        background-color: #f9f9f9;
-        border-radius: 0 0 10px 10px;
-        padding: 20px;
-    }
-    .event-details p{
-        margin: 0 5px 10px 5px;
-    }
-
-    .event-img {
-        border-radius: 10px 10px 0 0;
-        overflow: hidden;
-    }
-
-    .event-cover {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
-
-    /* For expired event */
-    .expired-event .event-cover {
-        filter: grayscale(100%);
-    }
 
     /* Adjustments for responsive design */
     @media (max-width: 768px) {
-        .event-category-container {
+        .event-organiser-container {
             grid-template-columns: repeat(2, 1fr); /* Two columns on medium screens */
         }
     }
 
     @media (max-width: 480px) {
-        .event-category-container {
+        .event-organiser-container {
             grid-template-columns: 1fr; /* One column on small screens */
         }
     }
-
-    .categories-header {
-        margin-bottom: 20px;
-    }
-
 
 </style>
     
@@ -93,6 +28,7 @@
     <div style="margin: 5% 10%;">
         <div class="categories-header">
             <h1 style="font-size: 40px;padding: 0 30px;">{{ category.category if category else "All Events" }}</h1>
+            <!-- Search, filter and sort -->
             <form class="search-sort-container" method="GET" action="{{ url_for('user_view.event_category', category=category.category if category else None) }}">
                 <div class="search-box">
                     <input type="text" name="search" placeholder="Search event..." value="{{ search_query }}"></td>
@@ -129,17 +65,17 @@
         </script>
 
         {% if event %}
-        <div class="event-category-container">
+        <div class="event-organiser-container">
             {% for event in event %}
             
             <!-- Adding grayscale to expired event -->
-            <div class="event-cat-container {% if event.event_end < current_datetime %}event-expired-container expired-event {% endif %}" 
+            <div class="event-organiser-card {% if event.event_end < current_datetime %}event-expired-container expired-event {% endif %}" 
             data-label="{% if event.event_end < current_datetime %}Expired{% endif %}">
                 <div class="event-img parallax">
                     <img src="{{ url_for('static', filename='images/' ~ (event.event_img or 'default_poster.png')) }}" 
                         alt="{{ event.event_name }}" class="event-cover">
                 </div>
-                <div class="event-details">
+                <div class="event-organiser-details">
                     <h3>{{ event.event_name }}</h3>
                     <a href="{{ url_for('user_view.organiser_details', admin_id=event.admin.admin_id) }}"><p>{{ event.admin.admin_name }}</p></a>
                     <p>{{ event.event_start.strftime('%B %d, %Y') }}, {{ event.event_time.strftime('%I:%M %p') }}</p>
@@ -151,12 +87,13 @@
             {% endfor %}
         </div>
         {% else %}
-        <p style="text-align: center;">No search result.</p>
+        <p style="text-align: center;">No results found.</p>
         {% endif %}
 
         <!-- Pagination controls -->
         <nav aria-label="Page navigation">
             <ul class="pagination">
+                <!-- Previous page -->
                 {% if pagination.has_prev %}
                 <li class="page-item">
                     <a class="page-link" href="{{ url_for('user_view.event_category', category=category.category if category else None, page=pagination.next_num, search=search_query, venue_type=venue_filter, expired=request.args.get('expired'), sort=sort) }}" aria-label="Previous">
@@ -165,6 +102,7 @@
                 </li>
                 {% endif %}
                 
+                <!-- Page number in the middle -->
                 {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
                     {% if page_num %}
                         <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
@@ -175,6 +113,7 @@
                     {% endif %}
                 {% endfor %}
         
+                <!-- Next page -->
                 {% if pagination.has_next %}
                 <li class="page-item">
                     <a class="page-link" href="{{ url_for('user_view.event_category', category=category.category if category else None, page=pagination.next_num, search=search_query, venue_type=venue_filter, expired=request.args.get('expired'), sort=sort) }}" aria-label="Next">

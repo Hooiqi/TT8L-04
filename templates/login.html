@@ -3,16 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="icon" href="https://www.mmu.edu.my/favicon.ico" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/Loginpage.css') }}"
+      href="{{ url_for('static', filename='css/login_signup.css') }}"
     />
-    <title>Login Page</title>
+    <title>Login</title>
   </head>
 
   <body>
     <div class="wrapper">
+      <!-- Login field -->
       <form action="{{ url_for('auth.login') }}" method="POST">
         <h1>Login Page</h1>
         <div class="input-box">
@@ -29,12 +31,14 @@
           <button type="submit">Login</button>
         </div>
 
+        <!-- Link to signup.html -->
         <div class="register-link">
           <p>
             Don't have an account?
             <a href="{{ url_for('auth.signup') }}">Sign Up</a>
           </p>
         </div>
+        <!-- display error message -->
         {% with messages = get_flashed_messages(with_categories=true) %} 
           {% if messages %} 
             {% for category, message in messages %}

@@ -1,3 +1,4 @@
+<!-- template for user_view -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,7 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
+    <!-- navigation bar -->
     <div class="topnavbar">
         <div class="left">
             <div class="logo">
@@ -22,6 +24,7 @@
                 <li><a href="{{ url_for('user_view.home') }}">Home</a></li>
                 <div class="dropdown">
                     <button class="dropbtn">Events <i class="fa fa-caret-down"></i></button>
+                    <!-- display all the event categories -->
                     <div class="dropdown-content">
                         <a href="{{ url_for('user_view.event_category') }}">All</a>
                         {% for category in categories_nav %}
@@ -44,8 +47,9 @@
             </ul>
         </div>
     </div>
-    {% block content %}{% endblock %}
-    
-    <footer class="footer"><span>@2024 MMU Event by TT8L-04 | All rights reserved</span></footer>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="footer"><span>@2024 MMUEvent by TT8L-04 | All rights reserved</span></footer>
 </body>
 </html>

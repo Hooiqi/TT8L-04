@@ -1,0 +1,16 @@
+body {
+  font-family: "Arial", sans-serif;
+}
+
+.table {
+  margin-top: 20px;
+}
+
+thead th {
+  text-align: center;
+}
+
+tbody td {
+  vertical-align: middle;
+  text-align: center;
+}

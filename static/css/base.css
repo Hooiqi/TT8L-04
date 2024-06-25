@@ -7,7 +7,7 @@ body{
 }
 
 .topnavbar {
-  background-color: #015c92;
+  background-color: #003488;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,14 +35,14 @@ cursor: pointer;
 }
 
 .topnavbar a:hover, .dropdown:hover .dropbtn {
-background-color: #00436a;
+background-color: #001676;
 }
 
 .dropdown-content {
 display: none;
 position: absolute;
 right: 0;
-background-color: #2D82B5;
+background-color: #2d61cf;
 min-width: 160px;
 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 z-index: 1;
@@ -57,7 +57,7 @@ text-align: left;
 }
 
 .dropdown-content a:hover {
-background-color: #1c567b;
+background-color: #001676;
 }
 
 .dropdown:hover .dropdown-content {
@@ -72,15 +72,15 @@ align-items: center;
 .topnavbar .left .logo p {
 font-size: 30px;
 font-weight: bold;
-font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+font-family: 'Lucida Handwriting';
 color: aliceblue;
 margin-right: 10px;
 padding-left: 30px;
 }
 
 .topnavbar .left .logo p span {
-font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-color: aqua;
+font-family: 'Lucida Handwriting';
+color: aliceblue;
 }
 
 .topnavbar .right {
@@ -112,7 +112,7 @@ padding: 8px 12px;
 }
 
 .topnavbar .right ul li a:hover {
-background-color: #00436a;
+background-color: #003488;
 border-radius: 8px;
 }
 
@@ -124,9 +124,195 @@ border-radius: 8px;
     width: 100%;
     padding: 15px 0;
     color: white;
-    background: #1c567b;
+    background: #003488;
     font-weight: 500;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+.purchase-ticket {
+  background-color: #04AA6D;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 10px;
+  transition-duration: 0.4s;
+  border-radius: 12px;
+}
+
+.purchase-ticket:hover {
+  background-color: white;
+  color: black;
+  border: 2px solid #04AA6D;
+}
+
+/* Disable hover effect */
+.noHover{
+    pointer-events: none;
+}
+
+/* CREATE EVENT AND EDIT EVENT */
+.event-form-container {
+  width: 80%;
+  max-width: 1000px;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px 48px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.event-form {
+  display: flex;
+  flex-direction: column;
+}
+.event-form-group {
+  margin-bottom: 25px;
+}
+.event-form-group input,select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+/* group 2 row into 1 column */
+.event-flex-group {
+  display: flex;
+  gap: 50px;
+}
+.event-flex-group .event-form-group {
+  flex: 1;
+}
+
+
+
+.poster-container {
+  position: relative;
+  width: calc(100% + 96px); /* Adjust for the padding of the parent container */
+  left: -48px; /* Offset by the padding of the parent container */
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.poster-background-blur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px);
+  transform: scale(1.1); /* Slightly enlarge the background */
+  z-index: 1;
+}
+
+.poster-foreground-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  max-height: 100%;
+  z-index: 2;
+}
+
+
+
+.event-detail-container{
+  margin-left: 10%;
+  margin-right: 10%; 
+}
+.event-section{
+  margin-bottom: 60px;
+}
+
+
+table.event-display {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.event-display th,.event-display td {
+  border-bottom: 1px solid #dee2e6;
+  padding: 10px;
+  text-align: left;
+}
+.event-display th {
+  width: 23%;
+  padding-left: 2%;
+}
+
+
+.ticket-container {
+  border: 1px solid #ccc;
+  margin-bottom: 50px;
+  padding-bottom: 30px;
+  padding-left: 40px;
+  padding-right: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ticketcard {
+  display: block;
+  top: 0px;
+  position: relative;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  padding: 10px 30px 25px 40px;
+  margin: 12px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  z-index: 0;
+  overflow: hidden;
+  border: 1px solid #f2f8f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover {
+    transition: all 0.2s ease-out;
+    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+    top: -4px;
+    border: 1px solid #cccccc;
+    background-color: white;
+  }
+
+  &:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -16px;
+    right: -16px;
+    height: 32px;
+    width: 32px;
+    border-radius: 32px;
+    transform: scale(2);
+    transform-origin: 50% 50%;
+    transition: transform 0.15s ease-out;
+  }
+
+  &:hover:before {
+    transform: scale(2.15);
+  }
+}
+
+.ticket-details {
+  flex: 1;
+}
+.prices {
+  margin-top: 10px;
+}
+
+.select-label {
+  margin-right: 10px;
 }

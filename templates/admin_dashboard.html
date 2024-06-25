@@ -1,0 +1,188 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Admin Dashboard | MMUEvent{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Include a template to display flash messages for user notifications -->
+{% include 'flash_messages.html' %}
+    <div class="container mt-5">
+       <!-- Admin header section: displays profile picture and a form to update admin details -->
+      <div class="admin-header d-flex align-items-center mb-4">
+        <div class="adminprofile-picture">
+          <img
+            src="{{ url_for('static', filename='images/' ~ admin.admin_img) }}"
+            alt="Admin Profile"
+            class="rounded-circle"
+            style="margin:0 0 0 30px;width: 200px; height: 200px"
+          />
+        </div>
+        <div class="adminhomepage-info flex-grow-1">
+          <!-- Form for updating admin information: name, email, phone number, and description -->
+          <form method="POST" action="{{ url_for('admin_view.admin_home') }}">
+            <!-- CSRF token for security -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/> 
+            <div class="row justify-content-center align-items-center">
+              <div class="col-md-1">
+                <div class="form-group">
+                  <label for="name">Name:</label>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-control"
+                    value="{{ admin.admin_name }}"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center align-items-center">
+              <div class="col-md-1">
+                <div class="form-group">
+                  <label for="email">Email:</label>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ admin.admin_email }}"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center align-items-center">
+              <div class="col-md-1">
+                <div class="form-group">
+                  <label for="phonenumber">Phone Number:</label>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="phonenumber"
+                    name="phonenumber"
+                    class="form-control"
+                    minlength="10" maxlength="11" 
+                    value="{{ admin.admin_phone }}"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div class="col-md-9">
+                <div class="form-group">
+                  <label for="description">Description:</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    class="form-control"
+                    rows="3"
+                  >
+{{ admin.admin_descr }}</textarea
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="text-md-right">
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-primary btn-sm mb-2" style="padding: 10px 10px; width: 150px">
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Section displaying various statistics: total members, events, tickets sold, and sales -->
+      <div class="row">
+        <div class="col-md-6"> 
+          <div class="card mb-4">
+            <div class="card-body" style="height: 150px;">
+              <h5 class="card-title">Total Members</h5>
+              <p class="form-control">{{ total_members }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body" style="height: 150px;">
+              <h5 class="card-title">Total Events</h5>
+              <p class="form-control">{{ total_events }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body" style="height: 150px;">
+              <h5 class="card-title">Total Tickets Sold</h5>
+              <p class="form-control">{{ total_tickets_sold }}</p>
+            </div>  
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body" style="height: 150px;">
+              <h5 class="card-title">Total Sales</h5>
+              <p class="form-control">{{ total_sales }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Section with action buttons for event-related and member-related tasks -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <h5 class="card-title">Event Related</h5>
+              <a
+                href="{{ url_for('admin_view.create_event') }}"
+                class="btn btn-primary btn-block mb-2" 
+                >Create Events</a
+              >
+              <a
+                href="{{ url_for('admin_view.manage_event') }}"
+                class="btn btn-primary btn-block mb-2"
+                >Manage Drafts</a
+              >
+              <a
+                href="{{ url_for('admin_view.view_tickets') }}"
+                class="btn btn-primary btn-block mb-2"
+                >View Tickets</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <h5 class="card-title">Member Related</h5>
+              <a
+                href="{{ url_for('admin_view.manage_member') }}"
+                class="btn btn-primary btn-block mb-2"
+                >View Members</a
+              >
+              <a
+                href="{{ url_for('admin_view.member_request') }}"
+                class="btn btn-primary btn-block"
+                >Manage Member Requests</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

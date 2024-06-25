@@ -1,38 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manage Event</title>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='manage-event.css') }}"
-    />
-  </head>
-  <body>
+{% extends 'base_admin.html' %}
+
+{% block title %}Manage Event Draft{% endblock %}
+
+{% block head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/manage_event.css') }}"
+/>
+{% endblock %}
+
+{% block content %}
     <div class="container mt-5">
       <h1 class="mb-4">Manage Event Draft</h1>
+      <!-- Table to display the list of event drafts -->
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
             <th scope="col">No.</th>
             <th scope="col">Event Name</th>
             <th scope="col">Actions</th>
+            <th scope="col">Last updated</th>
           </tr>
         </thead>
         <tbody>
+          <!-- Loop through each event in the 'events' collection -->
           {% for event in events %}
           <tr>
             <td>{{ loop.index }}</td>
-            <td style="width: 75%;">
+            <!-- Display the event name in a form (could be for inline editing) -->
+            <td style="width: 60%;">
               <form
                 method="POST"
                 action="{{ url_for('admin_view.manage_event') }}"
@@ -47,12 +43,14 @@
                   <p>{{ event.event_name }}</p>
                 </div>
               </form>
-            </td>
             <td>
-              <div class="btn-group">
-                <button type="button" class="btn btn-secondary mr-2" disabled>
-                  Edit
-                </button>
+              <!-- Actions for each event (Edit and Delete buttons) -->
+              <a
+              href="{{ url_for('admin_view.edit_event', event_id=event.event_id) }}"
+              class="btn btn-primary btn-block mb-2"
+              style="width: 76px;"
+              >Edit</a
+              >
                 <form
                   method="POST"
                   action="{{ url_for('admin_view.manage_event') }}"
@@ -66,6 +64,7 @@
                   <button
                     type="submit"
                     class="btn btn-danger"
+                    style="width: 76px;"
                     name="action"
                     value="delete"
                   >
@@ -74,14 +73,10 @@
                 </form>
               </div>
             </td>
+            <td>{{ event.last_updated.strftime('%Y-%m-%d, %I:%M %p') }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  </body>
-</html>
+{% endblock %}

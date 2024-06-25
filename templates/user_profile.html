@@ -3,73 +3,15 @@
 {% block title %}My Profile{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
-<style>
-    * {box-sizing: border-box;}
-
-    .account-container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .account-card {
-        margin-bottom: 20px;
-        background-color: #f8f9fa;
-        border: 1px solid rgba(0, 0, 0, 0.125);
-        border-radius: 0.25rem;
-    }
-
-    .account-card-header {
-        background-color: #fff;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-        padding: 0.75rem 1.25rem;
-    }
-
-    .account-card-body {
-        padding: 1.25rem;
-    }
-
-    .account-card-title {
-        margin-bottom: 0.75rem;
-        color: #495057;
-    }
-
-    .profile-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .profile-table td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .profile-table th {
-        background-color: #e9ecef;
-    }
-
-        
-    /* Button used to open the contact form */
-    .open-button {
-            background-color: #04AA6D;
-            color: white;
-            border: none;
-            cursor: pointer;
-            opacity: 0.8;
-            bottom: 23px;
-            width: 280px;
-    }
-        
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<style> 
     /* The popup form - hidden by default */
     .form-popup {
         display: none;
         position: fixed;
         z-index: 9;
         left: 0;
-        top: 0;
+        top: 65px;
         width: 100%;
         height: 100%;
         overflow: auto;
@@ -78,7 +20,7 @@
     }
     
     /* Add styles to the form container */
-    .form-container {
+    .popup-form-container {
         position: relative;
         margin: 5% auto; /* 5% from the top and centered */
         padding: 5px 30px 30px 30px;
@@ -91,7 +33,7 @@
     }
         
     /* Full-width input fields */
-    .form-container input[type=text], .form-container input[type=password] {
+    .popup-form-container input[type=text], .popup-form-container input[type=password] {
         width: 100%;
         padding: 15px;
         margin: 5px 0 22px 0;
@@ -100,29 +42,13 @@
     }
         
     /* When the inputs get focus, do something */
-    .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+    .popup-form-container input[type=text]:focus, .popup-form-container input[type=password]:focus {
         background-color: #ddd;
         outline: none;
     }
-        
-    .form-container .btn {
-        background-color: #04AA6D;
-        color: white;
-        padding: 16px 20px;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-        margin-bottom:10px;
-        opacity: 0.8;
-    }
-        
-    /* Add some hover effects to buttons */
-    .form-container .btn:hover, .open-button:hover {
-        opacity: 1;
-    }    
 
     /* The Close Button (x) */
-    .close {
+    .popup-close {
         position: relative;
         left: 410px;
         top: 0;
@@ -131,8 +57,8 @@
         font-weight: bold;
     }
 
-    .close:hover,
-    .close:focus {
+    .popup-close:hover,
+    .popup-close:focus {
         color: red;
         cursor: pointer;
     }
@@ -150,10 +76,10 @@
 </style>
 {% endblock %}
 {% block content %}
-<main>
     <!-- Include the flash messages template -->
     {% include 'flash_messages.html' %}
     
+    <!-- Display user profile -->
     <div class="account-container">
         <div class="account-card">
             <div class="account-card-header">
@@ -179,15 +105,16 @@
                     </tr>
                     <tr>
                         <td style="border: none;"><b>Password</b></td>
-                        <td style="border: none;"><button class="open-button" onclick="openForm()">Reset Password</button></td>
+                        <td style="border: none;"><button class="reset-pwd" style="float: left;font-size: 15px;" onclick="openForm()">Reset Password</button></td>
                     </tr>
                 </table>
             </div>
+            <!-- Pop up form to reset password -->
             <div id="resetPassword" class="form-popup">
-                <form class="form-container" action="{{ url_for('user_view.reset_password', user_id=user.user_id) }}" method="POST">
+                <form class="popup-form-container" action="{{ url_for('user_view.reset_password', user_id=user.user_id) }}" method="POST">
                     {{ form.csrf_token }}
 
-                    <span onclick="closeForm()" class="close" title="Close Modal">&times;</span>
+                    <span onclick="closeForm()" class="popup-close" title="Close Modal">&times;</span>
                 
                     <div class="container">
                         <h2>Reset Password</h2>
@@ -199,14 +126,16 @@
                         <label for="confirm_new_pwd"><b>Confirm New Password</b></label>
                         {{ form.confirm_new_pwd }}
                         
-                        <button type="submit">Reset Password</button>
+                        <button type="submit" class="reset-pwd">Reset Password</button>
                     </div>
                 </form>
                 <script>
+                // Open form
                 function openForm() {
                     document.getElementById("resetPassword").style.display = "block";
                 }
                 
+                // Close form
                 function closeForm() {
                     document.getElementById("resetPassword").style.display = "none";
                 }
@@ -214,5 +143,4 @@
             </div>
         </div>
     </div>
-</main>
 {% endblock %}

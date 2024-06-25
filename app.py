@@ -7,8 +7,8 @@ import stripe
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://root:Ghq1003.@localhost/event_management_system'
-app.config['SECRET_KEY'] = 'ihopethiscanrun'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://root:tt8l_04@localhost/event_management_system'
+app.config['SECRET_KEY'] = '\xfcQz\x82\x00\xb5\xee\x14\x15\x8b\x8c\xbd\x1cSbP\xaa\x04k\x92\x9e\x15\xdf\xa6'
 app.config['UPLOAD_FOLDER'] = 'static/images/'
 
 # Initialize extensions
@@ -34,7 +34,7 @@ from admin_view import admin_view
 
 app.register_blueprint(auth, url_prefix='/')
 app.register_blueprint(user_view, url_prefix='/')
-app.register_blueprint(admin_view, url_prefix='/')
+app.register_blueprint(admin_view, url_prefix='/admin')
 
 # Run the app
 if __name__ == "__main__":

@@ -1,0 +1,113 @@
+{% extends 'base_user.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block title %}MMUEvent{% endblock %}
+
+{% block content %}
+
+
+<div class="slideshow-container">
+  {% for event in event_images %}
+  <div class="mySlides fade">
+    <a href="{{ url_for('user_view.event_details', event_id=event.event_id) }}">
+      <div class="poster-background-blur" style="background-image: url('{{ url_for('static', filename='images/' ~ event.event_img) }}');"></div>
+      <img src="{{ url_for('static', filename='images/' ~ event.event_img) }}" alt="Event Poster" class="poster-foreground-image event-cover">
+    </a>
+  </div>
+  {% endfor %}
+
+  <div class="slideshow-controls">
+    <button id="prevBtn" onclick="prevSlide()"> < </button>
+    <button id="nextBtn" onclick="nextSlide()"> > </button>
+  </div>
+</div>
+
+<script>
+  let slideIndex = 1; // Start from the first slide
+  let autoSlide;
+  
+  // Function to initialize slideshow
+  showSlides();
+  
+  function showSlides() {
+      let slides = document.getElementsByClassName("mySlides");
+      
+      // Hide all slides
+      for (let i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";  
+      }
+      
+      // Display the current slide
+      slides[slideIndex - 1].style.display = "block";  
+      
+      clearTimeout(autoSlide);
+      autoSlide = setTimeout(nextSlide, 4000); 
+  }
+  
+  function nextSlide() {
+      let slides = document.getElementsByClassName("mySlides");
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1 } 
+      showSlides();
+  }
+  
+  function prevSlide() {
+      let slides = document.getElementsByClassName("mySlides");
+      slideIndex--;
+      if (slideIndex < 1) { slideIndex = slides.length }
+      showSlides();
+  }
+  </script>
+
+<div style="margin: 60px 10% 80px 10%;">
+  <div style="margin: 40px 0;">
+    <h1>Upcoming Events</h1>
+    <div class="event-organiser-container">
+      {% for event in upcoming[:3] %} <!-- Limiting to three event -->
+    
+      <div class="event-organiser-card">
+          <div class="event-img parallax">
+              <img src="{{ url_for('static', filename='images/' ~ (event.event_img or 'default_poster.png')) }}" 
+                  alt="{{ event.event_name }}" class="event-cover">
+          </div>
+          <div class="event-organiser-details">
+              <h3>{{ event.event_name }}</h3>
+              <a href="{{ url_for('user_view.organiser_details', admin_id=event.admin.admin_id) }}"><p>{{ event.admin.admin_name }}</p></a>
+              <p>{{ event.event_start.strftime('%B %d, %Y') }}, {{ event.event_time.strftime('%I:%M %p') }}</p>
+              <a href="{{ url_for('user_view.event_details', event_id=event.event_id) }}">
+                  <button class="view-details-btn">View Details</button>
+              </a>
+          </div>
+      </div>
+      {% endfor %}
+    </div>  
+  </div>
+
+  <div>
+    <h1>New Events</h1>
+    <div class="event-organiser-container">
+      {% for event in new[:3] %} <!-- Limiting to three event -->
+      
+      <div class="event-organiser-card">
+          <div class="event-img parallax">
+              <img src="{{ url_for('static', filename='images/' ~ (event.event_img or 'default_poster.png')) }}" 
+                  alt="{{ event.event_name }}" class="event-cover">
+          </div>
+          <div class="event-organiser-details">
+              <h3>{{ event.event_name }}</h3>
+              <a href="{{ url_for('user_view.organiser_details', admin_id=event.admin.admin_id) }}"><p>{{ event.admin.admin_name }}</p></a>
+              <p>{{ event.event_start.strftime('%B %d, %Y') }}, {{ event.event_time.strftime('%I:%M %p') }}</p>
+              <a href="{{ url_for('user_view.event_details', event_id=event.event_id) }}">
+                  <button class="view-details-btn">View Details</button>
+              </a>
+          </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

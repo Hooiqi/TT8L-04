@@ -3,19 +3,8 @@
 {% block title %}Ticket Summary{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 <style>
-    .order-summary td, .order-summary th {
-        padding: 15px;
-        text-align: left;
-    }
-    .order-summary th {
-        width: 30%;
-    }
-    .order-summary {
-        width: 100%;
-    }
-
     .purchase-ticket {
         background-color: #04AA6D;
         color: white;
@@ -36,20 +25,6 @@
         background-color: white;
         color: black;
         border: 2px solid #04AA6D;
-    }
-
-    .order-summary-container {
-        width: 80%;
-        max-width: 700px;
-        margin: 100px auto;
-        background-color: #fff;
-        text-align: center; 
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .order-summary-form {
-        text-align: center;
     }
 
 </style>
@@ -81,15 +56,29 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <form action="{{ url_for('user_view.checkout') }}" method="post">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <input type="hidden" name="event_name" value="{{ event_name }}">
-                            <input type="hidden" name="ticket_id" value="{{ ticket_id }}">
-                            <input type="hidden" name="ticket_type" value="{{ ticket_type }}">
-                            <input type="hidden" name="ticket_price" value="{{ ticket_price }}">
-                            <input type="hidden" name="admin_id" value="{{ admin_id }}">
-                            <button type="submit" class="purchase-ticket" style="width: fit-content; margin-top: 10px; margin-bottom: -30px;">Proceed to Checkout</button>
-                        </form>
+                        <!-- Differentiate the route for free and priced tickets -->
+                        {% if ticket_price == '0.00' %}
+                            <form action="{{ url_for('user_view.confirm_order') }}" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="ticket_id" value="{{ ticket_id }}">
+                                <button type="submit" class="purchase-ticket" style="width: fit-content; margin-top: 10px; margin-bottom: -30px;"
+                                onclick="return confirm('Are you sure you want to buy this ticket? ');">
+                                    Confirm Order
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('user_view.checkout') }}" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="event_name" value="{{ event_name }}">
+                                <input type="hidden" name="ticket_id" value="{{ ticket_id }}">
+                                <input type="hidden" name="ticket_type" value="{{ ticket_type }}">
+                                <input type="hidden" name="ticket_price" value="{{ ticket_price }}">
+                                <input type="hidden" name="admin_id" value="{{ admin_id }}">
+                                <button type="submit" class="purchase-ticket" style="width: fit-content; margin-top: 10px; margin-bottom: -30px;">
+                                    Proceed to Checkout
+                                </button>
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
             </table>

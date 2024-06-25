@@ -1,0 +1,98 @@
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #ffffff;
+  color: #333;
+}
+
+.admin-header {
+  background-color: #f1f2f6;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.adminprofile-picture img {
+  border: 2px solid #dee2e6;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-control {
+  border: 1px solid #f1f2f6;
+  border-radius: 4px;
+}
+
+.card {
+  background-color: #f1f2f6;
+  border: #0b0000;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Horizontal center */
+  justify-content: center; /* Vertical center */
+  }
+
+.card-body p {
+    color: #2f2c2c; /* Change this to your desired color */
+    font-size: 1.7em;
+    text-align: center;
+    background-color: #f1f2f6;
+}
+
+.card-title {
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Dancing Script', cursive; /* Gradient background */
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+.btn-primary {
+  border-radius: 20px; /* Make buttons oval-shaped */
+  background-color: #e4ebef; 
+  border-color: #144376; /* Blue border color */
+  color: #0b0000; 
+  border: none;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition on hover */
+  font-family:'Dancing Script', cursive;
+  width: 300px;
+}
+
+
+.btn-primary:hover {
+  background-color: #0056b3; 
+  border-color: #0056b3; 
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  justify-content: space-around;
+}
+
+.row form-control {
+  text-align: center;
+  }
+
+.col-md-6 {
+  flex: 1;
+  min-width: 200px; /* Adjust as needed */
+}

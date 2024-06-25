@@ -49,12 +49,12 @@
 <body>
     <div class="success">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="Tick"><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4ZM14.66,20.75l9-8-1.32-1.5L14,18.63,9.71,14.29,8.29,15.71l5,5A1,1,0,0,0,14,21,1,1,0,0,0,14.66,20.75Z" fill="#ffffff" class="color000000 svgShape"></path></svg>
-        <h1>Payment Successful!</h1>
+        <h1>Order Successful!</h1>
         <p>You will be redirected to home page. Thank you!</p>
     <script>
         setTimeout(function() {
             window.location.href = "{{ url_for('user_view.home') }}";
-        }, 3000);  
+        }, 3000);  // Redirect to homepage after 3 seconds
     </script>
     </div>
 </body>

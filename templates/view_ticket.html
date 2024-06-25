@@ -1,23 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>View Ticket</title>
+{% extends 'base_admin.html' %}
+
+{% block title %}View Ticket{% endblock %}
+
+{% block head %}
     <link
       rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      href="{{ url_for('static', filename='manage_event.css') }}"
     />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='manage-event.css') }}"
-    />
-  </head>
-  <body>
+    {% endblock %}
+    {% block content %}
     <div class="container mt-5">
       <h1 class="mb-4">View Ticket Sold</h1>
       <table class="table table-striped table-bordered">
@@ -25,8 +16,9 @@
           <tr>
             <th scope="col">No.</th>
             <th scope="col">Event Name</th>
-            <th scope="col">Start Date</th>
+            <th scope="col">Publish Date</th>
             <th scope="col">Total Tickets Sold</th>
+            <th scope="col">Total Sales</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -35,8 +27,9 @@
           <tr>
             <td>{{ loop.index }}</td>
             <td>{{ event.event_name }}</td>
-            <td>{{ event.event_start.strftime('%Y-%m-%d') }}</td>
+            <td>{{ event.last_updated.strftime('%Y-%m-%d') }}</td>
             <td>{{ event.total_tickets_sold }}</td>
+            <td>{{ event.total_sales }}</td>
             <td>
               <form
                 method="GET"
@@ -57,5 +50,4 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  </body>
-</html>
+    {% endblock %}

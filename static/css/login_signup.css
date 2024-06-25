@@ -4,7 +4,7 @@ body{
     font-family: Georgia;
     background-repeat: no-repeat;
     background-size: cover;
-    background-image: url(/static/images/wave.jpg);
+    background-image: url(/static/images/index.jpg);
     height: 100vh;
     overflow: hidden;
 }
@@ -98,3 +98,9 @@ input[type="Submit"]:hover{
     text-align: center;
     margin: 0 0 20px 0;
   }
+.alert-success {
+    color: green;
+    font-size: 14px;
+    text-align: center;
+    margin: 0 0 20px 0;
+}

@@ -3,50 +3,12 @@
 {% block title %}{{ event.event_name }} | Event{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
-<style>
-    /* Button used to open the contact form */
-    .purchase-ticket {
-        background-color: #04AA6D;
-        color: white;
-        border: none;
-        cursor: pointer;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 10px 10px;
-        transition-duration: 0.4s;
-        border-radius: 12px;
-    }
-    
-    /* Add some hover effects to buttons */
-    .purchase-ticket:hover {
-        background-color: white;
-        color: black;
-        border: 2px solid #04AA6D;
-    }
-
-    /* Disable hover effect */
-    .noHover{
-        pointer-events: none;
-    }
-
-    .order-summary td, .order-summary th{
-        padding: 10px;
-        text-align: left;
-    }
-    .order-summary {
-        width: 100%;
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="create-event-container">
-    <div class="create-event-form">
+<div class="event-form-container">
+    <div class="event-form">
         <h1 style="font-size: 40px; text-align: center;">{{ event.event_name }}</h1>
         
         <!-- Display poster -->
@@ -63,7 +25,7 @@
                 <table class="event-display">
                     <tr>
                         <th>Organiser</th>
-                        <td>{{ event.admin.admin_name }}</td>
+                        <td><a href="{{ url_for('user_view.organiser_details', admin_id=event.admin.admin_id) }}">{{ event.admin.admin_name }}</a></td>
                     </tr>
                     <tr>
                         <th>Location/Platform</th>
@@ -103,10 +65,11 @@
             {% if tickets_info %}
                 <h2>Ticket</h2>
                 {% for ticket, remaining_tickets, ticket_price in tickets_info %}
-                <div class="card">
+                <div class="ticketcard" style="padding: 30px;">
                     <div class="ticket-detail">
-                        <h3>{{ ticket.ticket_type }}</h3>
+                        <h3 style="font-size: 18px;">{{ ticket.ticket_type }}</h3>
 
+                        <!-- Display price to "free" if price is 0 -->
                         {% if ticket.price == 0.00 and ticket.member_discount == 0.00 %}
                             <label for="price">Free</label>
                         {% else %}

@@ -3,118 +3,16 @@
 {% block title %}My Ticket History{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/Homepage.css') }}">
-<style>
-    .account-container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .account-card {
-        margin-bottom: 20px;
-        background-color: #f8f9fa;
-        border: 1px solid rgba(0, 0, 0, 0.125);
-        border-radius: 0.25rem;
-    }
-
-    .account-card-header {
-        background-color: #fff;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-        padding: 0.75rem 1.25rem;
-    }
-
-    .account-card-body {
-        padding: 1.25rem;
-    }
-
-    .account-card-title {
-        margin-bottom: 0.75rem;
-        color: #495057;
-    }
-
-    .ticket-history-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .ticket-history-table th, .ticket-history-table td {
-        padding: 12px;
-        text-align: left;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .ticket-history-table th {
-        background-color: #e9ecef;
-    }
-
-    .ticket-history-table tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    .ticket-history-table td .badge {
-        padding: 0.35em 0.65em;
-        font-size: 75%;
-        font-weight: 700;
-        line-height: 1;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: baseline;
-        border-radius: 0.35rem;
-    }
-
-    .badge-success {
-        color: #fff;
-        background-color: #28a745;
-    }
-
-    .badge-danger {
-        color: #fff;
-        background-color: #dc3545;
-    }
-
-    .badge-warning {
-        color: #212529;
-        background-color: #ffc107;
-    }
-
-    .badge-info {
-        color: #fff;
-        background-color: #17a2b8;
-    }
-    .search-form {
-        display: flex;
-        flex-flow: row wrap;
-        align-items: center;
-    }
-
-    .search-form label {
-        margin: 5px 10px 5px 0;
-    }
-
-    .search-form input {
-        vertical-align: middle;
-        margin: 5px 10px 5px 0;
-        padding: 10px;
-        border: 1px solid #ddd;
-    }   
-     .search-form select {
-        margin: 5px 10px 5px 0;
-        padding: 10px;
-        width: max-content;
-        border: none;
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 
 {% block content %}
-<main>
-    <div class="account-container">
+    <div class="account-container" style="margin: 40px auto; max-width: max-content;">
         <div class="account-card">
             <div class="account-card-header">
                 <h1 class="account-card-title">My Ticket History</h1>
-                <form class="search-form" method="GET" action="{{ url_for('user_view.ticket_history', user_id=user.user_id) }}">
+                <!-- Search by event name -->
+                <form class="search-box" method="GET" action="{{ url_for('user_view.ticket_history', user_id=user.user_id) }}">
                     <input type="text" name="search" placeholder="Search events..." value="{{ search_query }}">
                     <button type="submit" style="width: 100px;">Search</button>
                 </form>
@@ -122,34 +20,34 @@
             <div class="account-card-body">
                 <!-- Check if record existed -->
                 {% if user_orders %}
+                <!-- Display record if existed -->
                 <table class="ticket-history-table">
                     <thead>
                         <tr>
-                            <th>Invoice</th>
+                            <th class="invoice-column">Invoice</th>
                             <th>Event Name</th>
                             <th>Ticket Type</th>
-                            <th>Total</th>
+                            <th>Total(RM)</th>
                             <th>Order Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for order, ticket, event in user_orders %}
                         <tr>
-                            <td>{{ order.invoice }}</td>
+                            <td class="invoice-column">{{ order.invoice }}</td>
                             <td><a href="{{ url_for('user_view.event_details', event_id=event.event_id) }}">{{ event.event_name }}</a></td>
                             <td>{{ ticket.ticket_type }}</td>
-                            <td>RM {{ ticket.price }}</td>
+                            <td>{{ order.total_amount }}</td>
                             <td>{{ order.order_date.strftime('%Y-%m-%d') }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-                <!-- if no record -->
+                <!-- Text displayed if no record -->
                 {% else %}
                 <p style="text-align: center;">No records found.</p>
                 {% endif %}
             </div>
         </div>
     </div>
-</main>
 {% endblock %}
