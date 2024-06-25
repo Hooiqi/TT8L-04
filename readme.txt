@@ -10,13 +10,13 @@ pip install -r requirements.txt
 # Start the development server:
 python app.py
 
-Admin Guide:
+# Admin Guide:
 To create a new event:
 -Log in as an admin.
 -Click "Create Event" and fill out the required details.
 -Manage event drafts and user request (accept/reject)
 
-User Guide:
+# User Guide:
 -Login/ Sign up as an user
 -Request to join society to get membership
 -View events by category, time, organiser and location
