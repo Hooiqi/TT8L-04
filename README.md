@@ -1,4 +1,6 @@
 # Event Management System README
+# Web
+http://tt8l04.pythonanywhere.com/
 
 # Dependencies (pip install)
 pip install -r requirements.txt
